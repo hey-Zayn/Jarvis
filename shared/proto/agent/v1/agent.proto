@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package jarvis.agent.v1;
+
+import "common/v1/common.proto";
+
+message StartConversationRequest {
+  jarvis.common.v1.RequestContext context = 1;
+  string title = 2;
+  map<string, string> metadata = 3;
+}
+
+message StartConversationResponse {
+  jarvis.common.v1.OperationStatus status = 1;
+  string conversation_id = 2;
+}
+
+message BrowserContext {
+  string url = 1;
+  string title = 2;
+  string selected_text = 3;
+  string page_text = 4;
+}
+
+message SendVoiceCommandRequest {
+  jarvis.common.v1.RequestContext context = 1;
+  string conversation_id = 2;
+  string transcript = 3;
+  bytes audio = 4;
+  BrowserContext browser_context = 5;
+}
+
+message SendVoiceCommandResponse {
+  jarvis.common.v1.OperationStatus status = 1;
+  string turn_id = 2;
+  string response_preview = 3;
+}
+
+message StreamAgentResponseRequest {
+  jarvis.common.v1.RequestContext context = 1;
+  string conversation_id = 2;
+  string turn_id = 3;
+}
+
+message AgentResponseChunk {
+  jarvis.common.v1.OperationStatus status = 1;
+  string conversation_id = 2;
+  string turn_id = 3;
+  string chunk = 4;
+  bool is_final = 5;
+}
+
+message SaveMemoryRequest {
+  jarvis.common.v1.RequestContext context = 1;
+  string content = 2;
+  map<string, string> metadata = 3;
+}
+
+message SaveMemoryResponse {
+  jarvis.common.v1.OperationStatus status = 1;
+  string memory_id = 2;
+}
+
+message SearchMemoryRequest {
+  jarvis.common.v1.RequestContext context = 1;
+  string query = 2;
+  uint32 limit = 3;
+}
+
+message MemoryResult {
+  string memory_id = 1;
+  string content = 2;
+  double score = 3;
+  map<string, string> metadata = 4;
+}
+
+message SearchMemoryResponse {
+  jarvis.common.v1.OperationStatus status = 1;
+  repeated MemoryResult results = 2;
+}
+
+service AgentService {
+  rpc StartConversation(StartConversationRequest) returns (StartConversationResponse);
+  rpc SendVoiceCommand(SendVoiceCommandRequest) returns (SendVoiceCommandResponse);
+  rpc StreamAgentResponse(StreamAgentResponseRequest) returns (stream AgentResponseChunk);
+  rpc SaveMemory(SaveMemoryRequest) returns (SaveMemoryResponse);
+  rpc SearchMemory(SearchMemoryRequest) returns (SearchMemoryResponse);
+}

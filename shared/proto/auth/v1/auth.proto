@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package jarvis.auth.v1;
+
+import "common/v1/common.proto";
+
+enum TokenStatus {
+  TOKEN_STATUS_UNSPECIFIED = 0;
+  TOKEN_STATUS_VALID = 1;
+  TOKEN_STATUS_EXPIRED = 2;
+  TOKEN_STATUS_INVALID = 3;
+}
+
+message RegisterRequest {
+  jarvis.common.v1.RequestContext context = 1;
+  string email = 2;
+  string password = 3;
+  string display_name = 4;
+}
+
+message AuthSession {
+  string user_id = 1;
+  string email = 2;
+  string display_name = 3;
+  string access_token = 4;
+  string refresh_token = 5;
+  int64 expires_in_seconds = 6;
+}
+
+message RegisterResponse { jarvis.common.v1.OperationStatus status = 1; AuthSession session = 2; }
+message LoginRequest { jarvis.common.v1.RequestContext context = 1; string email = 2; string password = 3; }
+message LoginResponse { jarvis.common.v1.OperationStatus status = 1; AuthSession session = 2; }
+message VerifyTokenRequest { jarvis.common.v1.RequestContext context = 1; string access_token = 2; }
+message VerifyTokenResponse { jarvis.common.v1.OperationStatus status = 1; TokenStatus token_status = 2; string user_id = 3; string email = 4; int64 expires_at_epoch_seconds = 5; }
+message RefreshTokenRequest { jarvis.common.v1.RequestContext context = 1; string refresh_token = 2; }
+message RefreshTokenResponse { jarvis.common.v1.OperationStatus status = 1; AuthSession session = 2; }
+
+message Profile {
+  string user_id = 1;
+  string email = 2;
+  string display_name = 3;
+  int64 created_at_epoch_millis = 4;
+  int64 updated_at_epoch_millis = 5;
+}
+message GetProfileRequest { jarvis.common.v1.RequestContext context = 1; string access_token = 2; }
+message GetProfileResponse { jarvis.common.v1.OperationStatus status = 1; Profile profile = 2; }
+message UpdateProfileRequest { jarvis.common.v1.RequestContext context = 1; string access_token = 2; string display_name = 3; }
+message UpdateProfileResponse { jarvis.common.v1.OperationStatus status = 1; Profile profile = 2; }
+
+service AuthService {
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc VerifyToken(VerifyTokenRequest) returns (VerifyTokenResponse);
+  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
+  rpc GetProfile(GetProfileRequest) returns (GetProfileResponse);
+  rpc UpdateProfile(UpdateProfileRequest) returns (UpdateProfileResponse);
+}
