@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package jarvis.worker.v1;
+
+import "common/v1/common.proto";
+
+message EnqueueActionLogRequest {
+  jarvis.common.v1.RequestContext context = 1;
+  string idempotency_key = 2;
+  string action_type = 3;
+  string conversation_id = 4;
+  string payload_json = 5;
+}
+
+message EnqueueActionLogResponse {
+  jarvis.common.v1.OperationStatus status = 1;
+  string job_id = 2;
+}
+
+message EnqueueConversationPersistRequest {
+  jarvis.common.v1.RequestContext context = 1;
+  string idempotency_key = 2;
+  string conversation_id = 3;
+  string turn_id = 4;
+  string payload_json = 5;
+}
+
+message EnqueueConversationPersistResponse {
+  jarvis.common.v1.OperationStatus status = 1;
+  string job_id = 2;
+}
+
+service WorkerJobService {
+  rpc EnqueueActionLog(EnqueueActionLogRequest) returns (EnqueueActionLogResponse);
+  rpc EnqueueConversationPersist(EnqueueConversationPersistRequest) returns (EnqueueConversationPersistResponse);
+}

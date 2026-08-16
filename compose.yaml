@@ -50,6 +50,7 @@ services:
       - ./backend/gateway/.env
     volumes:
       - ./backend/gateway:/app
+      - ./shared:/shared:ro
       - /app/node_modules
     depends_on:
       - auth-service
@@ -62,10 +63,12 @@ services:
     restart: always
     ports:
       - "4001:4001"
+      - "4101:4101"
     env_file:
       - ./backend/services/auth-service/.env
     volumes:
       - ./backend/services/auth-service:/app
+      - ./shared:/shared:ro
       - /app/node_modules
     depends_on:
       - redis
@@ -77,10 +80,12 @@ services:
     restart: always
     ports:
       - "4002:4002"
+      - "4102:4102"
     env_file:
       - ./backend/services/agent-service/.env
     volumes:
       - ./backend/services/agent-service:/app
+      - ./shared:/shared:ro
       - /app/node_modules
     depends_on:
       - redis
@@ -93,10 +98,12 @@ services:
     restart: always
     ports:
       - "4003:4003"
+      - "4103:4103"
     env_file:
       - ./backend/services/worker-service/.env
     volumes:
       - ./backend/services/worker-service:/app
+      - ./shared:/shared:ro
       - /app/node_modules
     depends_on:
       - redis

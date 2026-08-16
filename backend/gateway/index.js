@@ -1,16 +1,24 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import proxy from 'express-http-proxy';
+import { config } from './src/config/index.js';
+import { createAuthClient } from './src/grpc/authClient.js';
+import { createAgentClient } from './src/grpc/agentClient.js';
+import { createWorkerClient } from './src/grpc/workerClient.js';
+import { createAuthController } from './src/controllers/authController.js';
+import { createAgentController } from './src/controllers/agentController.js';
+import { createWorkerController } from './src/controllers/workerController.js';
+import { createAuthRoutes } from './src/http/authRoutes.js';
+import { createAgentRoutes } from './src/http/agentRoutes.js';
+import { createWorkerRoutes } from './src/http/workerRoutes.js';
+import { errorHandler } from './src/http/errorHandler.js';
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
-const HOST = '0.0.0.0';
-const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || 'auth-service:4001';
-const AGENT_SERVICE_URL = process.env.AGENT_SERVICE_URL || 'agent-service:4002';
-const WORKER_SERVICE_URL = process.env.WORKER_SERVICE_URL || 'worker-service:4003';
+const authClient = createAuthClient(config.authServiceUrl);
+const agentClient = createAgentClient(config.agentServiceUrl);
+const workerClient = createWorkerClient(config.workerServiceUrl);
 
 app.use(cors());
 app.use(express.json());
@@ -20,16 +28,14 @@ app.get('/health', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.json({
-        message: 'Gateway service is working',
-        port: PORT
-    });
+    res.json({ message: 'Gateway service is working', port: config.port });
 });
 
-app.use('/auth', proxy(`http://${AUTH_SERVICE_URL}`));
-app.use('/agent', proxy(`http://${AGENT_SERVICE_URL}`));
-app.use('/worker', proxy(`http://${WORKER_SERVICE_URL}`));
+app.use('/auth', createAuthRoutes(createAuthController({ authClient })));
+app.use('/agent', createAgentRoutes(createAgentController({ agentClient })));
+app.use('/worker', createWorkerRoutes(createWorkerController({ workerClient })));
+app.use(errorHandler);
 
-app.listen(PORT, HOST, () => {
-    console.log(`[API Gateway] REST Server running on http://${HOST}:${PORT}`);
+app.listen(config.port, config.host, () => {
+    console.log(`[API Gateway] HTTP server running on http://${config.host}:${config.port}`);
 });

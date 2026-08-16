@@ -1,7 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-
+import { config } from './src/config/index.js';
+import { createHttpApp } from './src/http/routes.js';
+import { startGrpcServer } from './src/grpc/server.js';
 
 dotenv.config();
 
@@ -10,23 +12,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+createHttpApp({ serviceName: config.serviceName }).register(app);
+startGrpcServer({ host: config.host, port: config.grpcPort });
 
-app.get('/', (req, res) => {
-    res.json({
-        message: "Worker service is running"
-    })
-})
-
-app.get('/health', (req, res) => {
-    res.json({
-        status: 'ok',
-        service: 'Worker service'
-    })
-})
-
-const PORT = process.env.PORT || 4003;
-const HOST = '0.0.0.0';
-
-app.listen(PORT, HOST, () => {
-    console.log(`[Worker Service] Server running on http://${HOST}:${PORT}`);
-})
+app.listen(config.healthPort, config.host, () => {
+    console.log(`[Worker Service] HTTP health server running on http://${config.host}:${config.healthPort}`);
+});
