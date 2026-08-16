@@ -1,0 +1,16 @@
+FROM node:22-alpine
+
+ARG SERVICE
+WORKDIR /app
+
+COPY package.json package-lock.json tsconfig.base.json ./
+COPY database ./database
+COPY services ./services
+COPY shared ./shared
+
+RUN npm ci
+RUN npm run build --workspace=@jarvis/${SERVICE}
+
+ENV NODE_ENV=production
+CMD ["sh", "-c", "npm run start --workspace=@jarvis/${SERVICE}"]
+

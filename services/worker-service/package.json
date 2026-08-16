@@ -1,0 +1,14 @@
+{
+  "name": "@jarvis/worker-service",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "node --test"
+  },
+  "dependencies": { "bullmq": "^5.0.0" },
+  "devDependencies": { "tsx": "^4.0.0" }
+}

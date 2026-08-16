@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package jarvis.agent.v1;
+
+service AgentService {
+  rpc ProcessCommand(CommandRequest) returns (CommandResponse);
+}
+
+message CommandRequest {
+  string user_id = 1;
+  string user_prompt = 2;
+  string active_tab_url = 3;
+}
+
+message CommandResponse {
+  string action = 1;
+  string target_url = 2;
+  string spoken_reply = 3;
+  string raw_context = 4;
+}

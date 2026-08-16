@@ -1,0 +1,29 @@
+{
+  "name": "jarvis-ai",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "services/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "dev:gateway": "npm run dev --workspace=@jarvis/api-gateway",
+    "dev:auth": "npm run dev --workspace=@jarvis/auth-service",
+    "dev:agent": "npm run dev --workspace=@jarvis/agent-service",
+    "dev:worker": "npm run dev --workspace=@jarvis/worker-service",
+    "db:generate": "prisma generate --schema=./database/prisma/schema.prisma",
+    "db:migrate:deploy": "prisma migrate deploy --schema=./database/prisma/schema.prisma",
+    "db:migrate:dev": "prisma migrate dev --schema=./database/prisma/schema.prisma"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "prisma": "^6.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3"
+  }
+}
+
