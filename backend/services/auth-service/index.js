@@ -24,7 +24,7 @@ app.get('/health', (req, res) => {
     })
 })
 
-const PORT = process.env.PORT || 7001;
+const PORT = process.env.PORT || 4001;
 const HOST = '0.0.0.0';
 
 app.listen(PORT, HOST, () => {
