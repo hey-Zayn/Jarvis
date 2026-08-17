@@ -8,10 +8,14 @@ import { createWorkerClient } from './src/grpc/workerClient.js';
 import { createAuthController } from './src/controllers/authController.js';
 import { createAgentController } from './src/controllers/agentController.js';
 import { createWorkerController } from './src/controllers/workerController.js';
-import { createAuthRoutes } from './src/http/authRoutes.js';
-import { createAgentRoutes } from './src/http/agentRoutes.js';
-import { createWorkerRoutes } from './src/http/workerRoutes.js';
-import { errorHandler } from './src/http/errorHandler.js';
+import {
+    createAuthRoutes,
+    createAgentRoutes,
+    createWorkerRoutes,
+    errorHandler
+} from './src/routes/index.js';
+import { createRateLimiter, createStrictRateLimiter } from './src/middlewares/rateLimiter.js';
+import { createAuthMiddleware } from './src/middlewares/authMiddleware.js';
 
 dotenv.config();
 
@@ -19,6 +23,10 @@ const app = express();
 const authClient = createAuthClient(config.authServiceUrl);
 const agentClient = createAgentClient(config.agentServiceUrl);
 const workerClient = createWorkerClient(config.workerServiceUrl);
+
+const authMiddleware = createAuthMiddleware({ authClient });
+const rateLimiter = createRateLimiter();
+const strictRateLimiter = createStrictRateLimiter();
 
 app.use(cors());
 app.use(express.json());
@@ -31,9 +39,13 @@ app.get('/', (req, res) => {
     res.json({ message: 'Gateway service is working', port: config.port });
 });
 
-app.use('/auth', createAuthRoutes(createAuthController({ authClient })));
-app.use('/agent', createAgentRoutes(createAgentController({ agentClient })));
-app.use('/worker', createWorkerRoutes(createWorkerController({ workerClient })));
+const authController = createAuthController({ authClient });
+const agentController = createAgentController({ agentClient });
+const workerController = createWorkerController({ workerClient });
+
+app.use('/auth', createAuthRoutes(authController, rateLimiter, strictRateLimiter));
+app.use('/agent', authMiddleware, createAgentRoutes(agentController, rateLimiter));
+app.use('/worker', authMiddleware, createWorkerRoutes(workerController, rateLimiter));
 app.use(errorHandler);
 
 app.listen(config.port, config.host, () => {
