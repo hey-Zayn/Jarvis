@@ -151,6 +151,17 @@ class ApiClient {
     return response.data;
   }
 
+  async sendVoiceCommandStream(data: {
+    conversationId: string;
+    transcript: string;
+    browserContext?: { url: string; title: string; selectedText: string; pageText: string };
+  }): Promise<ReadableStream<Uint8Array>> {
+    const response = await this.client.post(`/voice/stream`, data, {
+      responseType: 'stream',
+    });
+    return response.data;
+  }
+
   async streamAgentResponse(conversationId: string, turnId: string) {
     const response = await this.client.get(`/agent/responses/${conversationId}/${turnId}`, {
       responseType: 'stream',

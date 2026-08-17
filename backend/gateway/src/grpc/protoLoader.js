@@ -11,12 +11,21 @@ function resolveProtoRoot() {
         '/shared/proto'
     ].filter(Boolean);
 
-    const protoRoot = candidates.find((candidate) => fs.existsSync(candidate));
+    console.log('protoLoader.js: process.cwd() =', process.cwd());
+    console.log('protoLoader.js: process.env.PROTO_ROOT =', process.env.PROTO_ROOT);
+    console.log('protoLoader.js: candidates =', candidates);
+
+    const protoRoot = candidates.find((candidate) => {
+        const exists = fs.existsSync(candidate);
+        console.log(`protoLoader.js: Checking ${candidate} -> ${exists}`);
+        return exists;
+    });
 
     if (!protoRoot) {
         throw new Error(`Unable to resolve proto root from: ${candidates.join(', ')}`);
     }
 
+    console.log('protoLoader.js: Selected protoRoot =', protoRoot);
     return protoRoot;
 }
 

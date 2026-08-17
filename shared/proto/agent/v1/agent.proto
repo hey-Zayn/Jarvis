@@ -81,7 +81,7 @@ message SearchMemoryResponse {
 
 service AgentService {
   rpc StartConversation(StartConversationRequest) returns (StartConversationResponse);
-  rpc SendVoiceCommand(SendVoiceCommandRequest) returns (SendVoiceCommandResponse);
+  rpc SendVoiceCommand(SendVoiceCommandRequest) returns (stream AgentResponseChunk);
   rpc StreamAgentResponse(StreamAgentResponseRequest) returns (stream AgentResponseChunk);
   rpc SaveMemory(SaveMemoryRequest) returns (SaveMemoryResponse);
   rpc SearchMemory(SearchMemoryRequest) returns (SearchMemoryResponse);

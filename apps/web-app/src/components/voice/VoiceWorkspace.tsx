@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Mic, MicOff, Volume2, VolumeX, Send, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { apiClient } from '@/lib/api';
 
 export function VoiceWorkspace() {
   const [isListening, setIsListening] = useState(false);
@@ -25,11 +26,72 @@ export function VoiceWorkspace() {
 
   const handleSend = async () => {
     if (!transcript.trim() || isProcessing) return;
+    
     setIsProcessing(true);
-    // TODO: Send to agent service
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setTranscript('');
-    setIsProcessing(false);
+    try {
+      // Generate a conversation ID if we don't have one yet
+      // In a real app, this would come from auth or conversation state
+      const conversationId = `conv-${Date.now()}`;
+      
+      // Call the streaming voice command endpoint
+      const stream = await apiClient.sendVoiceCommandStream({
+        conversationId,
+        transcript,
+        browserContext: {
+          url: window.location.href,
+          title: document.title,
+          selectedText: window.getSelection()?.toString() || '',
+          pageText: document.body.innerText.substring(0, 1000) // Limit page text
+        }
+      });
+
+      // Reset transcript for new response
+      setTranscript('');
+      
+      // Process the streaming response
+      const reader = stream.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+      
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          
+          buffer += decoder.decode(value, { stream: true });
+          
+          // Process complete lines (NDJSON format)
+          const lines = buffer.split('\n');
+          buffer = lines.pop(); // Keep incomplete line in buffer
+          
+          for (const line of lines) {
+            if (line.trim()) {
+              try {
+                const chunk = JSON.parse(line);
+                // Update transcript with the chunk content
+                setTranscript(prev => prev + chunk.chunk);
+                
+                // If this is the final chunk, we could reset processing state here
+                // but we'll keep it until the stream closes to show we're still processing
+                if (chunk.is_final) {
+                  // Optional: add a small delay before resetting to show completion
+                  await new Promise(resolve => setTimeout(resolve, 300));
+                }
+              } catch (e) {
+                console.error('Failed to parse JSON chunk:', line, e);
+              }
+            }
+          }
+        }
+      } finally {
+        reader.releaseLock();
+      }
+    } catch (error) {
+      console.error('Error sending voice command:', error);
+      setTranscript(`Error: ${error.message}`);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (

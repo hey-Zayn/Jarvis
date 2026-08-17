@@ -16,15 +16,26 @@ export function createAgentController({ agentClient }) {
             }
         },
 
-        async sendVoiceCommand(req, res, next) {
+        sendVoiceCommand(req, res, next) {
             try {
-                const response = await unary(agentClient, 'SendVoiceCommand', {
+                const call = agentClient.SendVoiceCommand({
                     context: createRequestContext(req),
                     conversationId: req.body.conversationId || '',
                     transcript: req.body.transcript || '',
                     browserContext: req.body.browserContext || {}
                 });
-                res.json(response);
+
+                res.setHeader('Content-Type', 'application/x-ndjson');
+
+                call.on('data', (chunk) => {
+                    res.write(`${JSON.stringify(chunk)}\n`);
+                });
+
+                call.on('end', () => {
+                    res.end();
+                });
+
+                call.on('error', next);
             } catch (error) {
                 next(error);
             }
