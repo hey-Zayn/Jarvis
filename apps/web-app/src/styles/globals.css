@@ -1,0 +1,172 @@
+@import "tailwindcss";
+
+@theme {
+  /* Gruvbox Dark Color Palette */
+  --color-gruvbox-bg0: #1d2021;
+  --color-gruvbox-bg1: #3c3836;
+  --color-gruvbox-bg2: #504945;
+  --color-gruvbox-bg3: #665c54;
+  --color-gruvbox-bg4: #7c6f64;
+
+  --color-gruvbox-fg0: #fbf1c7;
+  --color-gruvbox-fg1: #ebdbb2;
+  --color-gruvbox-fg2: #d5c4a1;
+  --color-gruvbox-fg3: #bdae93;
+  --color-gruvbox-fg4: #a89984;
+
+  --color-gruvbox-red: #cc241d;
+  --color-gruvbox-red-light: #fb4934;
+
+  --color-gruvbox-green: #8ec07c;
+  --color-gruvbox-green-light: #b8bb26;
+
+  --color-gruvbox-yellow: #d79921;
+  --color-gruvbox-yellow-light: #fabd2f;
+
+  --color-gruvbox-blue: #458588;
+  --color-gruvbox-blue-light: #83a598;
+
+  --color-gruvbox-purple: #b16286;
+  --color-gruvbox-purple-light: #d3869b;
+
+  --color-gruvbox-aqua: #689d6a;
+  --color-gruvbox-aqua-light: #8ec07c;
+
+  --color-gruvbox-orange: #d65d0e;
+  --color-gruvbox-orange-light: #fe8019;
+
+  /* Semantic colors - Gruvbox Dark */
+  --color-background: var(--color-gruvbox-bg0);
+  --color-surface: var(--color-gruvbox-bg1);
+  --color-surface-elevated: var(--color-gruvbox-bg2);
+  --color-border: var(--color-gruvbox-bg2);
+  --color-border-hover: var(--color-gruvbox-bg3);
+  --color-text-primary: var(--color-gruvbox-fg1);
+  --color-text-secondary: var(--color-gruvbox-fg3);
+  --color-text-muted: var(--color-gruvbox-fg4);
+  --color-accent: var(--color-gruvbox-green);
+  --color-accent-hover: var(--color-gruvbox-green-light);
+
+  /* Shadows */
+  --shadow-subtle: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-glow: 0 0 0 1px var(--color-gruvbox-green / 0.2), 0 4px 12px -2px var(--color-gruvbox-green / 0.15);
+
+  /* Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-accent / 0.3);
+    color: var(--color-text-primary);
+  }
+}
+
+@layer utilities {
+  .glass {
+    background-color: var(--color-surface / 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border);
+  }
+
+  .glass-elevated {
+    background-color: var(--color-surface-elevated / 0.9);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--color-border-hover);
+  }
+
+  .border-glow {
+    border: 1px solid var(--color-border);
+    transition: border-color var(--transition-normal);
+  }
+
+  .border-glow:hover {
+    border-color: var(--color-border-hover);
+  }
+
+  .border-glow:focus-within {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-glow);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .animate-in {
+    animation: animateIn var(--transition-normal) ease-out forwards;
+  }
+
+  @keyframes animateIn {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-out {
+    animation: animateOut var(--transition-fast) ease-in forwards;
+  }
+
+  @keyframes animateOut {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      var(--color-gruvbox-bg2) 25%,
+      var(--color-gruvbox-bg3) 50%,
+      var(--color-gruvbox-bg2) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+}
