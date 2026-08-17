@@ -8,8 +8,12 @@ export function createAgentController() {
             callback(null, agentService.startConversation(call.request));
         },
 
-        SendVoiceCommand(call, callback) {
-            callback(null, agentService.sendVoiceCommand(call.request));
+        SendVoiceCommand(call) {
+            for (const chunk of agentService.sendVoiceCommand(call.request)) {
+                call.write(chunk);
+            }
+
+            call.end();
         },
 
         StreamAgentResponse(call) {

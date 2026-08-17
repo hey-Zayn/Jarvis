@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
+// Load environment variables from .env file
+import './setup.js';
+
 import { config } from './src/config/index.js';
 import { createAuthClient } from './src/grpc/authClient.js';
 import { createAgentClient } from './src/grpc/agentClient.js';
@@ -10,14 +12,13 @@ import { createAgentController } from './src/controllers/agentController.js';
 import { createWorkerController } from './src/controllers/workerController.js';
 import {
     createAuthRoutes,
+
     createAgentRoutes,
     createWorkerRoutes,
     errorHandler
 } from './src/routes/index.js';
 import { createRateLimiter, createStrictRateLimiter } from './src/middlewares/rateLimiter.js';
 import { createAuthMiddleware } from './src/middlewares/authMiddleware.js';
-
-dotenv.config();
 
 const app = express();
 const authClient = createAuthClient(config.authServiceUrl);
