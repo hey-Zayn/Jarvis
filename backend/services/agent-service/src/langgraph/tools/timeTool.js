@@ -6,12 +6,7 @@ export const timeTool = {
   description: 'Get the current date, time, and timezone information.',
   parameters: {
     type: 'object',
-    properties: {
-      timezone: {
-        type: 'string',
-        description: 'Optional IANA timezone name (e.g., "America/New_York", "UTC", "Asia/Karachi"). Defaults to system local timezone.'
-      }
-    }
+    properties: {}
   },
   async handler({ timezone } = {}) {
     const now = new Date();

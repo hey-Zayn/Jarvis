@@ -7,7 +7,7 @@ You have access to tools. If you need to perform calculations, look up the time,
 Keep explanations brief unless explicitly requested.`;
 
 export class LangGraphAgent {
-  constructor({ groqApiKey = process.env.GROQ_API_KEY, model = process.env.GROQ_MODEL || 'qwen/qwen3.6-27b', maxSteps = 4, timeoutMs = 12000 } = {}) {
+  constructor({ groqApiKey = process.env.GROQ_API_KEY, model = process.env.GROQ_MODEL || 'openai/gpt-oss-120b', maxSteps = 4, timeoutMs = 12000 } = {}) {
     this.groqApiKey = groqApiKey;
     this.model = model;
     this.maxSteps = maxSteps;
@@ -128,51 +128,22 @@ export class LangGraphAgent {
       const stream = await groq.chat.completions.create({
         model: this.model,
         messages: finalMessages,
-        temperature: 0.5,
-        max_tokens: 400,
+        temperature: 0.4,
+        max_tokens: 500,
         stream: true
       });
 
       let fullResponse = '';
-      let inThinkBlock = false;
-      let thinkBuffer = '';
 
       for await (const chunk of stream) {
         const content = chunk.choices[0]?.delta?.content || '';
-        if (!content) continue;
-
-        // Strip <think>...</think> blocks that Qwen3 emits
-        let filtered = '';
-        let remaining = content;
-        while (remaining.length > 0) {
-          if (inThinkBlock) {
-            const endIdx = remaining.indexOf('</think>');
-            if (endIdx !== -1) {
-              inThinkBlock = false;
-              remaining = remaining.slice(endIdx + 8);
-            } else {
-              break; // still in think block, discard all
-            }
-          } else {
-            const startIdx = remaining.indexOf('<think>');
-            if (startIdx !== -1) {
-              filtered += remaining.slice(0, startIdx);
-              inThinkBlock = true;
-              remaining = remaining.slice(startIdx + 7);
-            } else {
-              filtered += remaining;
-              break;
-            }
-          }
-        }
-
-        if (filtered) {
-          fullResponse += filtered;
+        if (content) {
+          fullResponse += content;
           yield {
             status: okStatus('Streaming voice command response'),
             conversation_id: state.conversationId,
             turn_id: `turn-${Date.now()}-${chunkIndex++}`,
-            chunk: filtered,
+            chunk: content,
             is_final: false
           };
         }
@@ -203,9 +174,9 @@ export class LangGraphAgent {
   }
 
   async * _streamFallback(state, errorMsg) {
-    const text = state.transcript
-      ? `I heard: "${state.transcript}". Here is a direct response from Jarvis.`
-      : `Jarvis agent ready. (${errorMsg || 'Active'})`;
+    const text = errorMsg 
+      ? `Jarvis is ready. (${errorMsg})`
+      : `I received your command: "${state.transcript || ''}".`;
 
     const chunkSize = 15;
     let idx = 0;

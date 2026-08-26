@@ -56,11 +56,6 @@ export const memoryStoreTool = {
       content: {
         type: 'string',
         description: 'The specific fact, detail, or preference to remember for future conversations'
-      },
-      category: {
-        type: 'string',
-        enum: ['user_preference', 'task', 'fact', 'general'],
-        description: 'Memory classification category'
       }
     },
     required: ['content']

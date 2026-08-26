@@ -15,11 +15,85 @@ interface MessageTurn {
 }
 
 const promptSuggestions = [
-  'What is 45 * 18 + 120?',
-  'Where do I live according to memory?',
+  'Open YouTube',
   'What is the current time in UTC?',
-  'Summarize the active tab context'
+  'Search on YouTube for lofi beats',
+  'Calculate 45 * 18 + 120'
 ];
+
+function executeBrowserAction(transcript: string): { message: string; url?: string } | null {
+  const t = transcript.toLowerCase().trim();
+
+  // YouTube (handles "open youtube", "open youthub", "open utube", "play youtube")
+  if (t.includes('youtube') || t.includes('youthub') || t.includes('utube')) {
+    const searchMatch = t.match(/(?:search|play|find)\s+(?:on\s+youtube\s+for|youtube\s+for|for)?\s*(.+)/i);
+    if (searchMatch && searchMatch[1] && !t.startsWith('open')) {
+      const query = encodeURIComponent(searchMatch[1].replace(/on youtube/i, '').trim());
+      const url = `https://www.youtube.com/results?search_query=${query}`;
+      if (typeof window !== 'undefined') window.open(url, '_blank');
+      return { message: `Searching YouTube for "${searchMatch[1].trim()}".`, url };
+    }
+    const url = 'https://www.youtube.com';
+    if (typeof window !== 'undefined') window.open(url, '_blank');
+    return { message: 'Opening YouTube in a new tab.', url };
+  }
+
+  // Google
+  if (t.includes('open google') || t === 'google') {
+    const url = 'https://www.google.com';
+    if (typeof window !== 'undefined') window.open(url, '_blank');
+    return { message: 'Opening Google in a new tab.', url };
+  }
+
+  // New Tab
+  if (t.includes('open new tab') || t.includes('new tab') || t.includes('open tab') || t === 'tab') {
+    const url = 'https://www.google.com';
+    if (typeof window !== 'undefined') window.open(url, '_blank');
+    return { message: 'Opening a new tab.', url };
+  }
+
+  // GitHub
+  if (t.includes('open github') || t === 'github') {
+    const url = 'https://www.github.com';
+    if (typeof window !== 'undefined') window.open(url, '_blank');
+    return { message: 'Opening GitHub in a new tab.', url };
+  }
+
+  // Reddit
+  if (t.includes('open reddit') || t === 'reddit') {
+    const url = 'https://www.reddit.com';
+    if (typeof window !== 'undefined') window.open(url, '_blank');
+    return { message: 'Opening Reddit in a new tab.', url };
+  }
+
+  // Twitter / X
+  if (t.includes('open twitter') || t.includes('open x') || t === 'twitter') {
+    const url = 'https://www.x.com';
+    if (typeof window !== 'undefined') window.open(url, '_blank');
+    return { message: 'Opening X (Twitter) in a new tab.', url };
+  }
+
+  // Google Search
+  const gMatch = t.match(/^(?:search|google|search for|search on google for)\s+(.+)/i);
+  if (gMatch && gMatch[1]) {
+    const query = encodeURIComponent(gMatch[1].trim());
+    const url = `https://www.google.com/search?q=${query}`;
+    if (typeof window !== 'undefined') window.open(url, '_blank');
+    return { message: `Searching Google for "${gMatch[1].trim()}".`, url };
+  }
+
+  // Generic "open <site>" (e.g. "open wikipedia", "open amazon")
+  const openMatch = t.match(/^open\s+([a-z0-9\-]+(?:\.[a-z]{2,})?)$/i);
+  if (openMatch && openMatch[1]) {
+    let domain = openMatch[1].trim();
+    if (!domain.includes('.')) domain += '.com';
+    const url = `https://${domain}`;
+    if (typeof window !== 'undefined') window.open(url, '_blank');
+    return { message: `Opening ${domain} in a new tab.`, url };
+  }
+
+  return null;
+}
 
 export function VoiceWorkspace() {
   const [isListening, setIsListening] = useState(false);
@@ -205,6 +279,19 @@ export function VoiceWorkspace() {
     const userTurnId = `user-${Date.now()}`;
     const assistantTurnId = `asst-${Date.now()}`;
 
+    // Check for browser action intent (e.g. "open youtube", "open new tab", "search on youtube for ...")
+    const actionResult = executeBrowserAction(textToSend);
+    if (actionResult) {
+      setMessages((prev) => [
+        ...prev,
+        { id: userTurnId, role: 'user', content: textToSend },
+        { id: assistantTurnId, role: 'assistant', content: actionResult.message, isStreaming: false }
+      ]);
+      setInputTranscript('');
+      speakResponse(actionResult.message);
+      return;
+    }
+
     // Add user turn and initialize assistant stream slot
     setMessages((prev) => [
       ...prev,
@@ -263,7 +350,7 @@ export function VoiceWorkspace() {
         }
       }
 
-      const finalText = accumulatedAssistantText || 'Response completed.';
+      const finalText = accumulatedAssistantText || 'Jarvis processed your request.';
 
       setMessages((prev) =>
         prev.map((msg) =>

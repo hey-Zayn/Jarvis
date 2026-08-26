@@ -10,11 +10,6 @@ export const weatherTool = {
       location: {
         type: 'string',
         description: 'The city or location name (e.g. "San Francisco, CA", "London", "Tokyo")'
-      },
-      unit: {
-        type: 'string',
-        enum: ['celsius', 'fahrenheit'],
-        description: 'Temperature unit preference. Defaults to celsius.'
       }
     },
     required: ['location']
