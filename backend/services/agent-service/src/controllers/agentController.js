@@ -5,31 +5,57 @@ export function createAgentController() {
 
     return {
         StartConversation(call, callback) {
-            callback(null, agentService.startConversation(call.request));
+            try {
+                const res = agentService.startConversation(call.request);
+                callback(null, res);
+            } catch (err) {
+                console.error('[AgentController] StartConversation error:', err);
+                callback(err);
+            }
         },
 
-        SendVoiceCommand(call) {
-            for (const chunk of agentService.sendVoiceCommand(call.request)) {
-                call.write(chunk);
+        async SendVoiceCommand(call) {
+            try {
+                for await (const chunk of agentService.sendVoiceCommand(call.request)) {
+                    call.write(chunk);
+                }
+                call.end();
+            } catch (err) {
+                console.error('[AgentController] SendVoiceCommand error:', err);
+                call.emit('error', err);
             }
-
-            call.end();
         },
 
         StreamAgentResponse(call) {
-            for (const chunk of agentService.streamAgentResponse(call.request)) {
-                call.write(chunk);
+            try {
+                for (const chunk of agentService.streamAgentResponse(call.request)) {
+                    call.write(chunk);
+                }
+                call.end();
+            } catch (err) {
+                console.error('[AgentController] StreamAgentResponse error:', err);
+                call.emit('error', err);
             }
-
-            call.end();
         },
 
-        SaveMemory(call, callback) {
-            callback(null, agentService.saveMemory(call.request));
+        async SaveMemory(call, callback) {
+            try {
+                const res = await agentService.saveMemory(call.request);
+                callback(null, res);
+            } catch (err) {
+                console.error('[AgentController] SaveMemory error:', err);
+                callback(err);
+            }
         },
 
-        SearchMemory(call, callback) {
-            callback(null, agentService.searchMemory(call.request));
+        async SearchMemory(call, callback) {
+            try {
+                const res = await agentService.searchMemory(call.request);
+                callback(null, res);
+            } catch (err) {
+                console.error('[AgentController] SearchMemory error:', err);
+                callback(err);
+            }
         }
     };
 }

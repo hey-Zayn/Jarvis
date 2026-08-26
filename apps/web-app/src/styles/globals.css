@@ -50,7 +50,7 @@
   /* Shadows */
   --shadow-subtle: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-glow: 0 0 0 1px var(--color-gruvbox-green / 0.2), 0 4px 12px -2px var(--color-gruvbox-green / 0.15);
+  --shadow-glow: 0 0 0 1px rgba(142, 192, 124, 0.2), 0 4px 12px -2px rgba(142, 192, 124, 0.15);
 
   /* Radius */
   --radius-sm: 0.375rem;
@@ -84,20 +84,20 @@
   }
 
   ::selection {
-    background-color: var(--color-accent / 0.3);
+    background-color: rgba(142, 192, 124, 0.3);
     color: var(--color-text-primary);
   }
 }
 
 @layer utilities {
   .glass {
-    background-color: var(--color-surface / 0.8);
+    background-color: rgba(60, 56, 54, 0.8);
     backdrop-filter: blur(12px);
     border: 1px solid var(--color-border);
   }
 
   .glass-elevated {
-    background-color: var(--color-surface-elevated / 0.9);
+    background-color: rgba(80, 73, 69, 0.9);
     backdrop-filter: blur(16px);
     border: 1px solid var(--color-border-hover);
   }

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jarvis Assistant</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ═══ LOGIN VIEW ═══ -->
+  <div class="login-view" id="loginView">
+    <div class="login-brand">
+      <div class="login-logo">J</div>
+      <h1 class="login-title">Jarvis AI</h1>
+      <p class="login-subtitle">Sign in to continue</p>
+    </div>
+    <form class="login-form" id="loginForm">
+      <div class="field-group">
+        <label class="field-label" for="loginEmail">Email</label>
+        <input class="field-input" type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email"/>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="loginPassword">Password</label>
+        <input class="field-input" type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password"/>
+      </div>
+      <div class="login-error" id="loginError"></div>
+      <button class="login-btn" type="submit" id="loginBtn">Sign In</button>
+    </form>
+  </div>
+
+  <!-- ═══ MAIN APP VIEW ═══ -->
+  <div class="extension-container" id="appView" style="display:none;">
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <div class="logo-icon">J</div>
+        <span class="brand-name">Jarvis</span>
+      </div>
+      <div class="header-right">
+        <div class="status-indicator">
+          <span class="dot"></span>
+          <span class="status-text">Ready</span>
+        </div>
+        <button class="logout-btn" id="btnLogout" title="Sign out">↩</button>
+      </div>
+    </header>
+
+    <!-- Active Tab Context Pill -->
+    <div class="tab-context" id="tabContext">
+      <span class="context-label">Page:</span>
+      <span class="context-title" id="pageTitle">Loading tab info...</span>
+      <button class="context-action" id="btnSummarize" title="Summarize current page">Summarize</button>
+    </div>
+
+    <!-- Output / Stream Display -->
+    <div class="output-area" id="outputArea">
+      <p class="placeholder-text">Press the microphone or click "Summarize" to interact with Jarvis...</p>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-area">
+      <button class="mic-button" id="btnMic" aria-label="Toggle voice input">
+        <svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="22"/>
+        </svg>
+      </button>
+
+      <div class="input-wrapper">
+        <input type="text" id="commandInput" placeholder="Type a command or query..." />
+        <button class="send-button" id="btnSend">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js" type="module"></script>
+</body>
+</html>

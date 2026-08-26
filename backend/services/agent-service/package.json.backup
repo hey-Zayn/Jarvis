@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "agent-service",
   "version": "1.0.0",
   "description": "",
@@ -13,8 +13,6 @@
   "dependencies": {
     "@grpc/grpc-js": "^1.14.4",
     "@grpc/proto-loader": "^0.8.1",
-    "bullmq": "^4.12.3",
-    "ioredis": "^5.4.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",

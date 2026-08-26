@@ -1,0 +1,273 @@
+:root {
+  --bg-primary: #09090b;
+  --bg-secondary: #18181b;
+  --border-color: #27272a;
+  --accent-color: #7c3aed;
+  --accent-hover: #6d28d9;
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+}
+
+/* ─── Login View ─────────────── */
+.login-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 28px 24px;
+  gap: 24px;
+}
+.login-brand { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.login-logo {
+  width: 48px; height: 48px;
+  background: var(--accent-color);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 24px; color: #fff;
+  box-shadow: 0 0 24px rgba(124,58,237,0.45);
+  margin-bottom: 4px;
+}
+.login-title { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+.login-subtitle { font-size: 12px; color: var(--text-secondary); }
+.login-form { width: 100%; display: flex; flex-direction: column; gap: 14px; }
+.field-group { display: flex; flex-direction: column; gap: 5px; }
+.field-label { font-size: 11px; color: var(--text-secondary); font-weight: 500; letter-spacing: 0.3px; }
+.field-input {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px; padding: 9px 12px;
+  color: var(--text-primary); font-size: 13px;
+  outline: none; transition: border-color 0.15s; width: 100%;
+}
+.field-input:focus { border-color: var(--accent-color); box-shadow: 0 0 0 2px rgba(124,58,237,0.2); }
+.field-input::placeholder { color: #52525b; }
+.login-error { font-size: 11px; color: #f87171; min-height: 14px; text-align: center; }
+.login-btn {
+  background: var(--accent-color); border: none;
+  border-radius: 8px; color: #fff;
+  font-size: 13px; font-weight: 600; padding: 10px;
+  cursor: pointer; transition: background 0.15s, opacity 0.15s;
+  width: 100%; margin-top: 2px;
+}
+.login-btn:hover { background: var(--accent-hover); }
+.login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+}
+
+body {
+  width: 360px;
+  height: 480px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+.extension-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 14px;
+  gap: 10px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-icon {
+  width: 24px;
+  height: 24px;
+  background: var(--accent-color);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  color: #fff;
+}
+
+.brand-name {
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.3px;
+}
+
+.header-right { display: flex; align-items: center; gap: 8px; }
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  background-color: #10b981;
+  border-radius: 50%;
+}
+
+.logout-btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 2px 6px;
+  line-height: 1;
+  transition: all 0.15s;
+}
+.logout-btn:hover { border-color: #f87171; color: #f87171; }
+
+.tab-context {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  gap: 6px;
+}
+
+.context-label {
+  color: var(--text-secondary);
+}
+
+.context-title {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-primary);
+}
+
+.context-action {
+  background: rgba(124, 58, 237, 0.2);
+  border: 1px solid rgba(124, 58, 237, 0.4);
+  color: #c4b5fd;
+  border-radius: 5px;
+  padding: 2px 8px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.context-action:hover {
+  background: rgba(124, 58, 237, 0.35);
+}
+
+.output-area {
+  flex: 1;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 12px;
+  overflow-y: auto;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+}
+
+.placeholder-text {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.controls-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mic-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mic-button.active {
+  background-color: var(--accent-color);
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.5);
+  border-color: var(--accent-color);
+}
+
+.mic-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.input-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 4px 6px 4px 12px;
+}
+
+.input-wrapper input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 12px;
+  outline: none;
+}
+
+.input-wrapper input::placeholder {
+  color: var(--text-secondary);
+}
+
+.send-button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.send-button svg {
+  width: 12px;
+  height: 12px;
+}
+
+.send-button:hover {
+  background: var(--accent-hover);
+}

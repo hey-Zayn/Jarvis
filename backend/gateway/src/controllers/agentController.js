@@ -1,5 +1,8 @@
 import { createRequestContext } from '../utils/requestContext.js';
 import { unary } from '../grpc/unary.js';
+import { createLatencyLogger } from '../utils/logger.js';
+
+const latencyLogger = createLatencyLogger('gateway');
 
 export function createAgentController({ agentClient }) {
     return {
@@ -17,6 +20,17 @@ export function createAgentController({ agentClient }) {
         },
 
         sendVoiceCommand(req, res, next) {
+            // Record when request was received
+            const requestReceivedTime = Date.now();
+            let firstChunkTime = null;
+            let chunkCount = 0;
+            
+            latencyLogger.log('voice_command_request_received', {
+                requestId: req.headers['x-request-id'] || `req-${Date.now()}`,
+                conversationId: req.body.conversationId || '',
+                hasTranscript: !!req.body.transcript
+            });
+
             try {
                 const call = agentClient.SendVoiceCommand({
                     context: createRequestContext(req),
@@ -25,17 +39,54 @@ export function createAgentController({ agentClient }) {
                     browserContext: req.body.browserContext || {}
                 });
 
+                // Record when gRPC request was sent to agent-service
+                const grpcRequestSentTime = Date.now();
+                latencyLogger.log('grpc_request_sent_to_agent_service', {
+                    requestId: req.headers['x-request-id'] || `req-${Date.now()}`,
+                    conversationId: req.body.conversationId || '',
+                    latency: grpcRequestSentTime - requestReceivedTime
+                });
+
                 res.setHeader('Content-Type', 'application/x-ndjson');
 
                 call.on('data', (chunk) => {
+                    // Record first chunk time
+                    if (firstChunkTime === null) {
+                        firstChunkTime = Date.now();
+                        latencyLogger.log('voice_command_first_chunk_received', {
+                            requestId: req.headers['x-request-id'] || `req-${Date.now()}`,
+                            conversationId: req.body.conversationId || '',
+                            latency: firstChunkTime - requestReceivedTime
+                        });
+                    }
+                    
+                    chunkCount++;
                     res.write(`${JSON.stringify(chunk)}\n`);
                 });
 
                 call.on('end', () => {
+                    // Record when response stream ends
+                    const responseEndTime = Date.now();
+                    latencyLogger.log('voice_command_response_completed', {
+                        requestId: req.headers['x-request-id'] || `req-${Date.now()}`,
+                        conversationId: req.body.conversationId || '',
+                        latency: responseEndTime - requestReceivedTime,
+                        totalChunks: chunkCount,
+                        timeToFirstChunk: firstChunkTime ? firstChunkTime - requestReceivedTime : null
+                    });
                     res.end();
                 });
 
-                call.on('error', next);
+                call.on('error', (error) => {
+                    // Record error
+                    latencyLogger.log('voice_command_error', {
+                        requestId: req.headers['x-request-id'] || `req-${Date.now()}`,
+                        conversationId: req.body.conversationId || '',
+                        error: error.message,
+                        latency: Date.now() - requestReceivedTime
+                    });
+                    next(error);
+                });
             } catch (error) {
                 next(error);
             }

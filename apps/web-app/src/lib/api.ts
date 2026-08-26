@@ -156,10 +156,33 @@ class ApiClient {
     transcript: string;
     browserContext?: { url: string; title: string; selectedText: string; pageText: string };
   }): Promise<ReadableStream<Uint8Array>> {
-    const response = await this.client.post(`/voice/stream`, data, {
-      responseType: 'stream',
+    const { accessToken } = useAuthStore.getState();
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'x-request-id': `req-${Date.now()}`
+    };
+    if (accessToken) {
+      headers['Authorization'] = `Bearer ${accessToken}`;
+    }
+
+    const baseUrl = API_BASE_URL.replace(/\/+$/, '');
+    const url = baseUrl ? `${baseUrl}/agent/voice-command` : '/agent/voice-command';
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(data)
     });
-    return response.data;
+
+    if (!response.ok) {
+      throw new Error(`Request failed with status code ${response.status}`);
+    }
+
+    if (!response.body) {
+      throw new Error('Streaming response body is null');
+    }
+
+    return response.body;
   }
 
   async streamAgentResponse(conversationId: string, turnId: string) {

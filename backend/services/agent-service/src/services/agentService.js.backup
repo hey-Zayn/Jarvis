@@ -1,0 +1,166 @@
+﻿const okStatus = (message) => ({ ok: true, message });
+
+export async function createAgentService() {
+    const { createRequestContext } = await import('../utils/requestContext.js');
+    const { createLatencyLogger } = await import('../utils/logger.js');
+    
+    const latencyLogger = createLatencyLogger('agent-service');
+
+    return {
+        startConversation({ title }) {
+            return {
+                status: okStatus('StartConversation contract is wired'),
+                conversationId: \`phase1-conversation-\${Date.now()}\`
+            };
+        },
+
+        async *sendVoiceCommand({ conversationId, transcript }) {
+            // Phase 3.5: Add latency instrumentation
+            const requestReceivedTime = Date.now();
+            let firstChunkTime = null;
+            let chunkCount = 0;
+            let chunkIndex = 0;
+            
+            // Log request received
+            latencyLogger.log('voice_command_request_received', {
+                conversationId: conversationId || '',
+                hasTranscript: !!transcript
+            });
+
+            try {
+                // Import Groq dynamically to avoid issues if not installed
+                const { Groq } = await import('groq-sdk');
+                const groq = new Groq({
+                    apiKey: process.env.GROQ_API_KEY // Fallback for dev
+                });
+
+                // Record when LLM call starts
+                const llmCallStartTime = Date.now();
+                latencyLogger.log('llm_call_started', {
+                    conversationId: conversationId || '',
+                    latency: llmCallStartTime - requestReceivedTime
+                });
+
+                // Call Groq API to generate response with streaming
+                const stream = await groq.chat.completions.create({
+                    messages: [
+                        {
+                            role: "system",
+                            content: "You are Jarvis, a helpful AI assistant. Provide concise, helpful responses to user queries."
+                        },
+                        {
+                            role: "user",
+                            content: transcript
+                        }
+                    ],
+                    model: "llama3-8b-8192", // Fast Groq model
+                    temperature: 0.7,
+                    max_tokens: 150,
+                    stream: true, // Enable streaming from LLM
+                });
+
+                // Process the streaming response
+                for await (const chunk of stream) {
+                    const content = chunk.choices[0]?.delta?.content || '';
+
+                    // Skip empty chunks
+                    if (!content) {
+                        continue;
+                    }
+
+                    // Record first chunk time
+                    if (firstChunkTime === null) {
+                        firstChunkTime = Date.now();
+                        latencyLogger.log('voice_command_first_chunk_generated', {
+                            conversationId: conversationId || '',
+                            latency: firstChunkTime - requestReceivedTime,
+                            timeToFirstChunk: firstChunkTime - llmCallStartTime
+                        });
+                    }
+
+                    chunkCount++;
+                    
+                    // For now, we'll send each LLM chunk directly as a response chunk
+                    // In a more sophisticated implementation, we might buffer to ensure
+                    // minimum chunk size or split on word boundaries
+                    yield {
+                        status: okStatus('Streaming voice command response'),
+                        conversation_id: conversationId || \`phase2-conversation-\${Date.now()}\`,
+                        turn_id: \`phase2-turn-\${Date.now()}-\${chunkIndex}\`,
+                        chunk: content,
+                        is_final: false
+                    };
+
+                    chunkIndex++;
+                }
+
+                // Record when response stream completes
+                const responseEndTime = Date.now();
+                latencyLogger.log('voice_command_response_completed', {
+                    conversationId: conversationId || '',
+                    latency: responseEndTime - requestReceivedTime,
+                    totalChunks: chunkCount,
+                    timeToFirstChunk: firstChunkTime ? firstChunkTime - requestReceivedTime : null,
+                    llmProcessingTime: responseEndTime - llmCallStartTime
+                });
+
+                // Send final chunk to indicate completion
+                yield {
+                    status: okStatus('Streaming voice command response'),
+                    conversation_id: conversationId || \`phase2-conversation-\${Date.now()}\`,
+                    turn_id: \`phase2-turn-\${Date.now()}-\${chunkIndex}\`,
+                    chunk: '', // Empty chunk for final
+                    is_final: true
+                };
+            } catch (error) {
+                // Record error
+                const errorTime = Date.now();
+                latencyLogger.log('voice_command_error', {
+                    conversationId: conversationId || '',
+                    error: error.message,
+                    latency: errorTime - requestReceivedTime
+                });
+                
+                console.error('Error calling LLM API:', error);
+                // Fallback to echo response with streaming if LLM fails
+                const fallbackText = transcript
+                    ? \`I heard you say: "\${transcript}". This is a streaming response from Jarvis (fallback).\`
+                    : 'I received a voice command. This is a streaming response from Jarvis (fallback).';
+
+                // Split fallback into chunks for streaming
+                const chunkSize = 15; // Characters per chunk
+                for (let i = 0; i < fallbackText.length; i += chunkSize) {
+                    yield {
+                        status: okStatus('Streaming voice command response'),
+                        conversation_id: conversationId || \`phase2-conversation-\${Date.now()}\`,
+                        turn_id: \`phase2-turn-\${Date.now()}-\${chunkIndex}\`,
+                        chunk: fallbackText.substring(i, i + chunkSize),
+                        is_final: i + chunkSize >= fallbackText.length
+                    };
+                    chunkIndex++;
+                }
+            }
+        },
+
+        streamAgentResponse({ conversationId, turnId }) {
+            return [
+                { status: okStatus('StreamAgentResponse contract is wired'), conversationId, turnId, chunk: 'Phase 1 ', isFinal: false },
+                { status: okStatus('StreamAgentResponse contract is wired'), conversationId, turnId, chunk: 'streaming stub complete.', isFinal: true }
+            ];
+        },
+
+        saveMemory() {
+            return {
+                status: okStatus('SaveMemory contract is wired'),
+                memoryId: \`phase1-memory-\${Date.now()}\`
+            };
+        },
+
+        searchMemory({ query }) {
+            return {
+                status: okStatus('SearchMemory contract is wired'),
+                results: query ? [{ memoryId: 'phase1-memory', content: \`Stub result for \${query}\`, score: 1, metadata: {} }] : []
+            };
+        }
+    };
+}

@@ -45,8 +45,11 @@ const agentController = createAgentController({ agentClient });
 const workerController = createWorkerController({ workerClient });
 
 app.use('/auth', createAuthRoutes(authController, rateLimiter, strictRateLimiter));
+app.use('/api/auth', createAuthRoutes(authController, rateLimiter, strictRateLimiter));
 app.use('/agent', authMiddleware, createAgentRoutes(agentController, rateLimiter));
+app.use('/api/agent', authMiddleware, createAgentRoutes(agentController, rateLimiter));
 app.use('/worker', authMiddleware, createWorkerRoutes(workerController, rateLimiter));
+app.use('/api/worker', authMiddleware, createWorkerRoutes(workerController, rateLimiter));
 app.use(errorHandler);
 
 app.listen(config.port, config.host, () => {

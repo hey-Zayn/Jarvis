@@ -62,17 +62,17 @@ This document breaks down the Phase 3 (Voice Command Loop MVP) detailed plan int
 **Goal**: Modify the agent-service to generate and stream response chunks in real-time as they are produced by the LLM.
 
 **Tasks**:
-- [ ] Modify the agent-service to generate response chunks asynchronously (e.g., using async iterators or callbacks from the LLM library).
-- [ ] Ensure each chunk is sent promptly via gRPC streaming without batching (or with minimal batching).
-- [ ] Update the gateway to relay gRPC response chunks to the client over the streaming HTTP/WebSocket connection without delay.
-- [ ] Test streaming with a mock LLM that returns delayed chunks (or use the real LLM with a delay) to verify true streaming behavior (i.e., client receives chunks as they are generated, not all at the end).
-- [ ] Handle errors during streaming (e.g., LLM timeout) and stream error messages if appropriate.
+- [x] Modify the agent-service to generate response chunks asynchronously (e.g., using async iterators or callbacks from the LLM library).
+- [x] Ensure each chunk is sent promptly via gRPC streaming without batching (or with minimal batching).
+- [x] Update the gateway to relay gRPC response chunks to the client over the streaming HTTP/WebSocket connection without delay.
+- [x] Test streaming with a mock LLM that returns delayed chunks (or use the real LLM with a delay) to verify true streaming behavior (i.e., client receives chunks as they are generated, not all at the end).
+- [x] Handle errors during streaming (e.g., LLM timeout) and stream error messages if appropriate.
 
 **Acceptance Criteria**:
-- The agent-service generates and sends response chunks as they are available from the LLM.
-- The gateway relays each chunk to the client immediately upon receipt.
-- The client receives response chunks incrementally, demonstrating true streaming.
-- The time to first chunk is significantly reduced compared to sending the full response at once.
+- [x] The agent-service generates and sends response chunks as they are available from the LLM.
+- [x] The gateway relays each chunk to the client immediately upon receipt.
+- [x] The client receives response chunks incrementally, demonstrating true streaming.
+- [x] The time to first chunk is significantly reduced compared to sending the full response at once.
 ## Phase 3.5: Latency Instrumentation and Optimization
 
 **Goal**: Instrument latency at key stages and optimize to meet the sub-200ms first-chunk goal.
@@ -132,7 +132,7 @@ This document breaks down the Phase 3 (Voice Command Loop MVP) detailed plan int
 - [ ] The voice command endpoint remains responsive (returns streaming response) even when the worker-service is stopped or down.
 - [ ] If the conversation persistence job fails repeatedly, the active voice response stream completes successfully and the error is logged (does not bring down the agent-service).
 - [ ] Latency metrics (request-to-first-chunk, request-to-stream-end) are visible in the service logs in a structured format.
-- [ ] The client receives response chunks incrementally, not as a single blob after the entire response is generated.
+- [x] The client receives response chunks incrementally, not as a single blob after the entire response is generated.
 
 ## Notes on Parallel Work and Dependencies
 - Phases 3.1 and 3.2 can be worked on in parallel by gateway and agent-service engineers, but Phase 3.2 depends on the proto definition which should be done first.
