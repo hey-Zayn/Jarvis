@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jarvis Assistant</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ═══ LOGIN VIEW ═══ -->
+  <div class="login-view" id="loginView">
+    <div class="login-brand">
+      <div class="login-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+      </div>
+      <h1 class="login-title">Jarvis AI</h1>
+      <p class="login-subtitle">Sign in to connect with your voice agent</p>
+    </div>
+    <form class="login-form" id="loginForm">
+      <div class="field-group">
+        <label class="field-label" for="loginEmail">Email</label>
+        <input class="field-input" type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email"/>
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="loginPassword">Password</label>
+        <input class="field-input" type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password"/>
+      </div>
+      <div class="login-error" id="loginError"></div>
+      <button class="login-btn" type="submit" id="loginBtn">
+        <span class="btn-text">Sign In</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- ═══ MAIN APP VIEW ═══ -->
+  <div class="extension-container" id="appView" style="display:none;">
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+        </div>
+        <span class="brand-name">Jarvis</span>
+        <span class="model-badge">GPT-120B</span>
+      </div>
+      <div class="header-right">
+        <button class="icon-btn" id="btnTtsToggle" title="Toggle Voice Output" aria-label="Toggle voice output">
+          <svg class="tts-icon" id="ttsIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+          </svg>
+        </button>
+        <div class="status-indicator" title="Gateway connected">
+          <span class="dot"></span>
+        </div>
+        <button class="icon-btn logout-btn" id="btnLogout" title="Sign out" aria-label="Sign out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Active Tab Context Pill -->
+    <div class="tab-context" id="tabContext">
+      <div class="context-info">
+        <span class="context-label">TAB</span>
+        <span class="context-title" id="pageTitle">Loading tab info...</span>
+      </div>
+      <span class="selection-badge" id="selectionBadge" style="display:none;">Text Selected</span>
+    </div>
+
+    <!-- Quick Action Chips -->
+    <div class="action-chips">
+      <button class="chip" id="chipSummarize" title="Summarize active page">
+        📄 Summarize
+      </button>
+      <button class="chip" id="chipTakeaways" title="Key takeaways">
+        📌 Key Points
+      </button>
+      <button class="chip" id="chipSelection" title="Explain selected text" style="display:none;">
+        🔍 Explain Highlight
+      </button>
+      <button class="chip" id="chipTime" title="Ask current time">
+        ⏱️ Time
+      </button>
+    </div>
+
+    <!-- Output / Stream Display -->
+    <div class="output-wrapper">
+      <div class="output-toolbar">
+        <span class="output-status" id="outputStatus">Jarvis Assistant</span>
+        <div class="output-actions">
+          <button class="toolbar-btn" id="btnCopy" title="Copy response" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+          </button>
+          <button class="toolbar-btn" id="btnClear" title="Clear response">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Listening Visualizer -->
+      <div class="listening-wave" id="listeningWave" style="display:none;">
+        <span class="wave-bar"></span>
+        <span class="wave-bar"></span>
+        <span class="wave-bar"></span>
+        <span class="wave-bar"></span>
+        <span class="wave-bar"></span>
+        <span class="listening-label">Listening...</span>
+      </div>
+
+      <div class="output-area" id="outputArea">
+        <p class="placeholder-text">Press the microphone or tap an action chip above to talk to Jarvis...</p>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-area">
+      <button class="mic-button" id="btnMic" aria-label="Toggle voice input" title="Click to speak">
+        <div class="mic-pulse"></div>
+        <svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="22"/>
+        </svg>
+      </button>
+
+      <div class="input-wrapper">
+        <input type="text" id="commandInput" placeholder="Ask Jarvis anything..." />
+        <button class="send-button" id="btnSend" aria-label="Send message" title="Send">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js" type="module"></script>
+</body>
+</html>
+

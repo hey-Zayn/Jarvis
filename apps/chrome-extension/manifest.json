@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Jarvis AI Voice Assistant",
+  "version": "1.0.0",
+  "description": "Ultra-low-latency voice-enabled AI agent with active tab contextual intelligence.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "http://localhost:5000/*",
+    "http://127.0.0.1:5000/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Open Jarvis Assistant"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
+

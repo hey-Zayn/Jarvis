@@ -6,6 +6,9 @@ import { Register } from '@/pages/Register';
 import { ForgotPassword } from '@/pages/ForgotPassword';
 import { ResetPassword } from '@/pages/ResetPassword';
 import { Workspace } from '@/pages/Workspace';
+import { HistoryPage } from '@/pages/HistoryPage';
+import { MemoryPage } from '@/pages/MemoryPage';
+import { SettingsPage } from '@/pages/SettingsPage';
 import { ProtectedRoute, PublicRoute } from '@/components/auth/ProtectedRoute';
 
 export default function App() {
@@ -21,9 +24,9 @@ export default function App() {
           </Route>
           <Route element={<ProtectedRoute />}>
             <Route path="/workspace" element={<Workspace />} />
-            <Route path="/history" element={<Workspace />} />
-            <Route path="/memory" element={<Workspace />} />
-            <Route path="/settings" element={<Workspace />} />
+            <Route path="/history" element={<HistoryPage />} />
+            <Route path="/memory" element={<MemoryPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
           </Route>
           <Route path="/" element={<Navigate to="/workspace" replace />} />
           <Route path="*" element={<Navigate to="/workspace" replace />} />
