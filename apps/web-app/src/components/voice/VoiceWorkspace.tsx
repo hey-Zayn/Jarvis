@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Mic, MicOff, Send, Loader2, Zap, RotateCcw, Volume2, VolumeX, Square, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { apiClient } from '@/lib/api';
+import { useAuthStore } from '@/store/authStore';
 
 interface MessageTurn {
   id: string;
@@ -96,6 +98,8 @@ function executeBrowserAction(transcript: string): { message: string; url?: stri
 }
 
 export function VoiceWorkspace() {
+  const voicePreference = useAuthStore((state) => state.user?.voicePreference || 'female');
+  const [searchParams] = useSearchParams();
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [ttsEnabled, setTtsEnabled] = useState(true);
@@ -113,6 +117,20 @@ export function VoiceWorkspace() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const conversationIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    const requestedConversationId = searchParams.get('conversationId');
+    if (!requestedConversationId) return;
+    conversationIdRef.current = requestedConversationId;
+    apiClient.getConversationMessages(requestedConversationId).then((response) => {
+      if (response.status?.ok && Array.isArray(response.messages)) {
+        setMessages(response.messages.map((message: { messageId: string; role: 'user' | 'assistant'; content: string }) => ({
+          id: message.messageId, role: message.role, content: message.content
+        })));
+      }
+    }).catch((error) => console.error('[VoiceWorkspace] Failed to load conversation:', error));
+  }, [searchParams]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -148,17 +166,19 @@ export function VoiceWorkspace() {
     if (!cleanText) return;
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.rate = 1.05;
-    utterance.pitch = 1.0;
+    utterance.rate = voicePreference === 'male' ? 0.98 : 1.05;
+    utterance.pitch = voicePreference === 'male' ? 0.78 : 1.05;
 
     // Pick a natural English voice if available
     const voices = window.speechSynthesis.getVoices();
-    const naturalVoice = voices.find(
-      (v) => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha'))
-    ) || voices.find((v) => v.lang.startsWith('en'));
+    const maleNames = /david|daniel|alex|mark|guy|male|man|james/i;
+    const femaleNames = /samantha|karen|zira|susan|female|woman|aria|jenny/i;
+    const preferredVoice = voices.find((v) => v.lang.startsWith('en') && (voicePreference === 'male' ? maleNames.test(v.name) : femaleNames.test(v.name)))
+      || voices.find((v) => v.lang.startsWith('en') && /natural|google|microsoft/i.test(v.name))
+      || voices.find((v) => v.lang.startsWith('en'));
 
-    if (naturalVoice) {
-      utterance.voice = naturalVoice;
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
     }
 
     utterance.onstart = () => setIsSpeaking(true);
@@ -166,7 +186,7 @@ export function VoiceWorkspace() {
     utterance.onerror = () => setIsSpeaking(false);
 
     window.speechSynthesis.speak(utterance);
-  }, [ttsEnabled, stopSpeaking]);
+  }, [ttsEnabled, stopSpeaking, voicePreference]);
 
   // Initialize and tear down Speech Recognition
   useEffect(() => {
@@ -306,7 +326,13 @@ export function VoiceWorkspace() {
     abortControllerRef.current = abortController;
 
     try {
-      const conversationId = `conv-${Date.now()}`;
+      if (!conversationIdRef.current) {
+        const conversation = await apiClient.startConversation({ title: textToSend.slice(0, 80) });
+        if (!conversation.status?.ok || !conversation.conversationId) throw new Error(conversation.status?.message || 'Could not create conversation');
+        conversationIdRef.current = conversation.conversationId;
+      }
+      const conversationId = conversationIdRef.current;
+      if (!conversationId) throw new Error('Conversation is not available');
       const stream = await apiClient.sendVoiceCommandStream({
         conversationId,
         transcript: textToSend,
@@ -457,7 +483,7 @@ export function VoiceWorkspace() {
               <div
                 className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                   msg.role === 'user'
-                    ? 'bg-violet-600 text-white shadow-[0_0_20px_rgba(139,92,246,0.25)] rounded-br-none'
+                    ? 'bg-violet-600 text-white shadow-[0_0_20px_rgba(25,118,210,0.25)] rounded-br-none'
                     : 'bg-zinc-950/90 text-zinc-200 border border-zinc-800 rounded-bl-none shadow-md'
                 }`}
               >
@@ -551,7 +577,7 @@ export function VoiceWorkspace() {
           onClick={handleVoiceToggle}
           className={`relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full transition-all duration-300 ${
             isListening
-              ? 'bg-violet-600 shadow-[0_0_25px_rgba(139,92,246,0.8)] text-white'
+              ? 'bg-violet-600 shadow-[0_0_25px_rgba(25,118,210,0.8)] text-white'
               : 'bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300'
           }`}
           aria-label={isListening ? 'Stop listening' : 'Start listening'}

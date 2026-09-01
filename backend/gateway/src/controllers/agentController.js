@@ -19,6 +19,20 @@ export function createAgentController({ agentClient }) {
             }
         },
 
+        async listConversations(req, res, next) {
+            try {
+                const response = await unary(agentClient, 'ListConversations', { context: createRequestContext(req), limit: Number(req.query.limit || 50) });
+                res.json(response);
+            } catch (error) { next(error); }
+        },
+
+        async getConversationMessages(req, res, next) {
+            try {
+                const response = await unary(agentClient, 'GetConversationMessages', { context: createRequestContext(req), conversationId: req.params.conversationId });
+                res.json(response);
+            } catch (error) { next(error); }
+        },
+
         sendVoiceCommand(req, res, next) {
             // Record when request was received
             const requestReceivedTime = Date.now();
@@ -136,6 +150,15 @@ export function createAgentController({ agentClient }) {
             } catch (error) {
                 next(error);
             }
+        }
+        ,
+        async listMemories(req, res, next) {
+            try { res.json(await unary(agentClient, 'ListMemories', { context: createRequestContext(req), category: req.query.category || 'all', limit: Number(req.query.limit || 100) })); }
+            catch (error) { next(error); }
+        },
+        async deleteMemory(req, res, next) {
+            try { res.json(await unary(agentClient, 'DeleteMemory', { context: createRequestContext(req), memoryId: req.params.memoryId })); }
+            catch (error) { next(error); }
         }
     };
 }

@@ -3,6 +3,8 @@ import { createRequestContext } from '../utils/requestContext.js';
 import { createLatencyLogger } from '../utils/logger.js';
 import { LangGraphAgent } from '../langgraph/agent.js';
 import { MemoryStore } from '../memory/memoryStore.js';
+import { prisma } from '../lib/prisma.js';
+import { cacheKeys, invalidateConversationCache, invalidateMemoryCache, redisCache } from '../cache/redisCache.js';
 
 const okStatus = (message) => ({ ok: true, message });
 
@@ -43,11 +45,49 @@ export function createAgentService() {
     });
 
     return {
-        startConversation({ title }) {
+        async startConversation({ title, context }) {
+            const userId = context?.userId;
+            if (!userId) throw new Error('Authenticated user is required');
+            const conversation = await prisma.conversation.create({
+                data: { userId, title: title?.trim() || 'New conversation' }
+            });
+            await invalidateConversationCache(userId);
             return {
-                status: okStatus('StartConversation contract is wired'),
-                conversationId: `conv-${Date.now()}`
+                status: okStatus('Conversation created'),
+                conversationId: conversation.id
             };
+        },
+
+        async listConversations({ limit = 50, context }) {
+            const userId = context?.userId;
+            if (!userId) throw new Error('Authenticated user is required');
+            const cacheKey = cacheKeys.conversations(userId, Math.min(Number(limit) || 50, 100));
+            const cached = await redisCache.get(cacheKey);
+            if (cached) return cached;
+            const conversations = await prisma.conversation.findMany({
+                where: { userId }, orderBy: { updatedAt: 'desc' }, take: Math.min(Number(limit) || 50, 100),
+                include: { _count: { select: { messages: true } }, messages: { orderBy: { createdAt: 'desc' }, take: 1 } }
+            });
+            const result = { status: okStatus('Conversations retrieved'), conversations: conversations.map((conversation) => ({
+                conversationId: conversation.id, title: conversation.title || 'New conversation',
+                createdAtEpochMillis: String(conversation.createdAt.getTime()), updatedAtEpochMillis: String(conversation.updatedAt.getTime()),
+                messageCount: conversation._count.messages, lastMessage: conversation.messages[0]?.content || ''
+            })) };
+            await redisCache.set(cacheKey, result, 45);
+            return result;
+        },
+
+        async getConversationMessages({ conversationId, context }) {
+            const userId = context?.userId;
+            if (!userId) throw new Error('Authenticated user is required');
+            const cacheKey = cacheKeys.conversationMessages(userId, conversationId);
+            const cached = await redisCache.get(cacheKey);
+            if (cached) return cached;
+            const conversation = await prisma.conversation.findFirst({ where: { id: conversationId, userId }, include: { messages: { orderBy: { createdAt: 'asc' } } } });
+            if (!conversation) throw new Error('Conversation not found');
+            const result = { status: okStatus('Conversation messages retrieved'), messages: conversation.messages.map((message) => ({ messageId: message.id, role: message.role, content: message.content, createdAtEpochMillis: String(message.createdAt.getTime()) })) };
+            await redisCache.set(cacheKey, result, 180);
+            return result;
         },
 
         async *sendVoiceCommand({ conversationId, transcript, browserContext, context }) {
@@ -57,7 +97,17 @@ export function createAgentService() {
             let fullResponseText = '';
 
             const reqId = context?.requestId || `req-${Date.now()}`;
-            const userId = context?.userId || 'anonymous-user';
+            const userId = context?.userId;
+            if (!userId) throw new Error('Authenticated user is required');
+            const history = conversationId ? await (async () => {
+                const cacheKey = cacheKeys.conversationMessages(userId, conversationId);
+                const cached = await redisCache.get(cacheKey);
+                if (cached?.messages) return cached.messages.slice(-30).map(({ role, content }) => ({ role, content }));
+                const messages = await prisma.message.findMany({ where: { conversationId, conversation: { userId } }, orderBy: { createdAt: 'asc' }, select: { id: true, role: true, content: true, createdAt: true } });
+                const result = { status: okStatus('Conversation messages retrieved'), messages: messages.map((message) => ({ messageId: message.id, role: message.role, content: message.content, createdAtEpochMillis: String(message.createdAt.getTime()) })) };
+                await redisCache.set(cacheKey, result, 180);
+                return result.messages.slice(-30).map(({ role, content }) => ({ role, content }));
+            })() : [];
 
             latencyLogger.log('voice_command_request_received', {
                 requestId: reqId,
@@ -71,7 +121,8 @@ export function createAgentService() {
                     userId,
                     transcript,
                     browserContext,
-                    memoryStore
+                    memoryStore,
+                    history
                 });
 
                 for await (const chunk of stream) {
@@ -149,6 +200,7 @@ export function createAgentService() {
                     category: metadata?.category || 'general',
                     metadata: metadata || {}
                 });
+                await invalidateMemoryCache(userId);
 
                 return {
                     status: okStatus('Memory saved successfully'),
@@ -165,6 +217,9 @@ export function createAgentService() {
 
         async searchMemory({ query, limit, context }) {
             const userId = context?.userId || 'anonymous-user';
+            const cacheKey = cacheKeys.memorySearch(userId, query || '', limit || 5);
+            const cached = query ? await redisCache.get(cacheKey) : null;
+            if (cached) return cached;
             try {
                 const hits = await memoryStore.search({
                     userId,
@@ -172,7 +227,7 @@ export function createAgentService() {
                     limit: limit || 5
                 });
 
-                return {
+                const result = {
                     status: okStatus(`Found ${hits.length} relevant memories`),
                     results: hits.map(h => ({
                         memoryId: h.memoryId,
@@ -184,6 +239,8 @@ export function createAgentService() {
                         }
                     }))
                 };
+                if (query) await redisCache.set(cacheKey, result, 120);
+                return result;
             } catch (err) {
                 console.error('[Agent Service] SearchMemory error:', err);
                 return {
@@ -191,6 +248,30 @@ export function createAgentService() {
                     results: []
                 };
             }
+        }
+        ,
+        async listMemories({ category, limit, context }) {
+            const userId = context?.userId;
+            if (!userId) throw new Error('Authenticated user is required');
+            const normalizedCategory = category || 'all';
+            const normalizedLimit = Math.min(Number(limit) || 100, 100);
+            const cacheKey = cacheKeys.memories(userId, normalizedCategory, normalizedLimit);
+            const cached = await redisCache.get(cacheKey);
+            if (cached) return cached;
+            const memories = await prisma.memory.findMany({
+                where: { userId, ...(normalizedCategory !== 'all' ? { category: normalizedCategory } : {}) },
+                orderBy: { createdAt: 'desc' }, take: normalizedLimit
+            });
+            const result = { status: okStatus('Memories retrieved'), memories: memories.map((memory) => ({ memoryId: memory.id, content: memory.content, category: memory.category, createdAtEpochMillis: String(memory.createdAt.getTime()) })) };
+            await redisCache.set(cacheKey, result, 60);
+            return result;
+        },
+        async deleteMemory({ memoryId, context }) {
+            const userId = context?.userId;
+            if (!userId) throw new Error('Authenticated user is required');
+            const deleted = await memoryStore.delete({ memoryId, userId });
+            if (deleted) await invalidateMemoryCache(userId);
+            return { status: okStatus(deleted ? 'Memory deleted' : 'Memory not found'), deleted };
         }
     };
 }

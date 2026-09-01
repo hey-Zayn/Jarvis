@@ -1,12 +1,26 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { AuthLayout } from '@/components/auth/AuthLayout';
+import {
+  AutoAwesome,
+  Google,
+  Visibility,
+  VisibilityOff,
+} from '@mui/icons-material';
+import {
+  Box,
+  Button,
+  Container,
+  Divider,
+  IconButton,
+  InputAdornment,
+  Link,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { useAuthStore } from '@/store/authStore';
 import { loginSchema, type LoginInput } from '@/lib/validators';
 import { toast } from '@/hooks/useToast';
@@ -20,9 +34,7 @@ export function Login() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginInput>({
-    resolver: zodResolver(loginSchema),
-  });
+  } = useForm<LoginInput>({ resolver: zodResolver(loginSchema) });
 
   const onSubmit = async (data: LoginInput) => {
     try {
@@ -36,67 +48,87 @@ export function Login() {
   };
 
   return (
-    <AuthLayout
-      title="Sign in to Jarvis"
-      description="Enter your credentials to access your workspace"
-      footer={
-        <p className="text-sm text-gruvbox-gray">
-          Don't have an account?{' '}
-          <Link to="/register" className="text-gruvbox-green hover:text-gruvbox-green-light font-medium">
-            Create one
-          </Link>
-        </p>
-      }
+    <Box
+      sx={{
+        minHeight: '100vh', display: 'flex', alignItems: 'center', py: { xs: 4, sm: 8 },
+        background: 'radial-gradient(circle at 50% -10%, rgba(25, 118, 210, 0.18), transparent 38%), #121212',
+      }}
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-        <div className="space-y-1.5">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            autoComplete="email"
-            placeholder="you@example.com"
-            {...register('email')}
-            error={errors.email?.message}
-            disabled={isLoading}
-          />
-        </div>
+      <Container maxWidth="sm">
+        <Stack spacing={3} sx={{ alignItems: 'center' }}>
+          <Stack spacing={1.5} sx={{ alignItems: 'center', textAlign: 'center' }}>
+            <Box sx={{ width: 52, height: 52, display: 'grid', placeItems: 'center', borderRadius: 2.5, color: 'primary.main', bgcolor: 'rgba(25, 118, 210, 0.14)', border: '1px solid rgba(25, 118, 210, 0.3)' }}>
+              <AutoAwesome />
+            </Box>
+            <Box>
+              <Typography variant="h4" sx={{ fontWeight: 700, letterSpacing: '-0.03em' }}>Welcome back</Typography>
+              <Typography color="text.secondary" sx={{ mt: 1 }}>Sign in to continue to your Jarvis workspace.</Typography>
+            </Box>
+          </Stack>
 
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
-            <Link
-              to="/forgot-password"
-              className="text-sm text-gruvbox-green hover:text-gruvbox-green-light"
-            >
-              Forgot password?
-            </Link>
-          </div>
-          <div className="relative">
-            <Input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="current-password"
-              placeholder="••••••••"
-              {...register('password')}
-              error={errors.password?.message}
-              disabled={isLoading}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gruvbox-gray hover:text-gruvbox-fg transition-colors"
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-            </button>
-          </div>
-        </div>
+          <Paper component="section" elevation={0} sx={{ width: '100%', p: { xs: 3, sm: 4 }, borderRadius: 3, bgcolor: 'rgba(30, 30, 30, 0.82)', border: '1px solid rgba(255, 255, 255, 0.09)', boxShadow: '0 24px 80px rgba(0, 0, 0, 0.28)', backdropFilter: 'blur(18px)' }}>
+            <Stack spacing={2.5}>
+              <Button
+                type="button"
+                variant="outlined"
+                size="large"
+                fullWidth
+                startIcon={<Google />}
+                disabled={isLoading}
+                sx={{ minHeight: 48, borderColor: 'rgba(255, 255, 255, 0.18)', color: 'text.primary', '&:hover': { borderColor: 'primary.main', bgcolor: 'rgba(25, 118, 210, 0.1)' } }}
+              >
+                Continue with Google
+              </Button>
 
-        <Button type="submit" className="w-full" size="lg" loading={isLoading}>
-          {isLoading ? 'Signing in...' : 'Sign in'}
-        </Button>
-      </form>
-    </AuthLayout>
+              <Divider sx={{ color: 'text.secondary', '&::before, &::after': { borderColor: 'divider' } }}>or continue with email</Divider>
+
+              <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+                <Stack spacing={2.25}>
+                  <TextField
+                    {...register('email')}
+                    id="email"
+                    label="Email address"
+                    type="email"
+                    autoComplete="email"
+                    fullWidth
+                    autoFocus
+                    disabled={isLoading}
+                    error={Boolean(errors.email)}
+                    helperText={errors.email?.message}
+                  />
+
+                  <Box>
+                    <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                      <Typography component="label" htmlFor="password" variant="body2" sx={{ fontWeight: 600 }}>Password</Typography>
+                      <Link component={RouterLink} to="/forgot-password" variant="body2" underline="hover" color="primary.light">Forgot password?</Link>
+                    </Stack>
+                    <TextField
+                      {...register('password')}
+                      id="password"
+                      type={showPassword ? 'text' : 'password'}
+                      autoComplete="current-password"
+                      fullWidth
+                      disabled={isLoading}
+                      error={Boolean(errors.password)}
+                      helperText={errors.password?.message}
+                      slotProps={{ input: { endAdornment: <InputAdornment position="end"><IconButton onClick={() => setShowPassword((visible) => !visible)} edge="end" disabled={isLoading} aria-label={showPassword ? 'Hide password' : 'Show password'}>{showPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment> } }}
+                    />
+                  </Box>
+
+                  <Button type="submit" variant="contained" size="large" fullWidth disabled={isLoading} sx={{ minHeight: 48, mt: 0.5, fontWeight: 700 }}>
+                    {isLoading ? 'Signing in…' : 'Sign in'}
+                  </Button>
+                </Stack>
+              </Box>
+            </Stack>
+          </Paper>
+
+          <Typography color="text.secondary" variant="body2" sx={{ textAlign: 'center' }}>
+            Don&apos;t have an account?{' '}
+            <Link component={RouterLink} to="/register" color="primary.light" underline="hover" sx={{ fontWeight: 600 }}>Create one</Link>
+          </Typography>
+        </Stack>
+      </Container>
+    </Box>
   );
 }

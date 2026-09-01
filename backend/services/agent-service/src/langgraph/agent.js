@@ -1,10 +1,23 @@
 import { AgentState } from './stateSchema.js';
 import { ToolRegistry } from './tools/registry.js';
+import fs from 'node:fs';
+import path from 'node:path';
 
-const SYSTEM_PROMPT = `You are Jarvis, an ultra-low-latency voice-enabled AI assistant.
-Your answers must be concise, accurate, direct, and conversational.
-You have access to tools. If you need to perform calculations, look up the time, check the weather, query memory, or search the web, use the available tools.
-Keep explanations brief unless explicitly requested.`;
+const FALLBACK_SYSTEM_PROMPT = 'You are Jarvis, a serious, concise, accurate, and practical AI assistant. Answer the user directly, use tools when useful, avoid filler, and never invent facts.';
+function loadSystemPrompt() {
+  const candidates = [
+    path.resolve(process.cwd(), 'prompt/prompt.md'),
+    new URL('../../../../prompt/prompt.md', import.meta.url)
+  ];
+  for (const candidate of candidates) {
+    try {
+      const prompt = fs.readFileSync(candidate, 'utf8').trim();
+      if (prompt) return prompt;
+    } catch { /* Docker/local fallback */ }
+  }
+  return FALLBACK_SYSTEM_PROMPT;
+}
+const SYSTEM_PROMPT = loadSystemPrompt();
 
 export class LangGraphAgent {
   constructor({ groqApiKey = process.env.GROQ_API_KEY, model = process.env.GROQ_MODEL || 'openai/gpt-oss-120b', maxSteps = 4, timeoutMs = 12000 } = {}) {
@@ -33,8 +46,8 @@ export class LangGraphAgent {
   /**
    * Main entry point to process a voice/text command with multi-step reasoning and streaming output.
    */
-  async *processCommand({ conversationId, userId, transcript, browserContext, memoryStore }) {
-    const state = new AgentState({ conversationId, userId, transcript, browserContext });
+  async *processCommand({ conversationId, userId, transcript, browserContext, memoryStore, history = [] }) {
+    const state = new AgentState({ conversationId, userId, transcript, browserContext, history });
     const startTime = Date.now();
     let chunkIndex = 0;
 
@@ -79,7 +92,7 @@ export class LangGraphAgent {
           messages,
           tools: toolDefinitions,
           tool_choice: 'auto',
-          temperature: 0.2,
+          temperature: 0.15,
           max_tokens: 600
         });
 
@@ -128,7 +141,7 @@ export class LangGraphAgent {
       const stream = await groq.chat.completions.create({
         model: this.model,
         messages: finalMessages,
-        temperature: 0.4,
+        temperature: 0.2,
         max_tokens: 500,
         stream: true
       });

@@ -1,17 +1,17 @@
 :root {
-  --bg-primary: #09090b;
-  --bg-secondary: #141417;
-  --bg-card: #1c1c21;
-  --bg-input: #18181d;
-  --border-color: #27272f;
-  --border-focus: #7c3aed;
-  --accent-color: #7c3aed;
-  --accent-hover: #6d28d9;
-  --accent-light: rgba(124, 58, 237, 0.15);
-  --accent-border: rgba(124, 58, 237, 0.35);
-  --text-primary: #f4f4f5;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --bg-card: #2a2a2a;
+  --bg-input: #1e1e1e;
+  --border-color: #3a3a3a;
+  --border-focus: #1976d2;
+  --accent-color: #1976d2;
+  --accent-hover: #1565c0;
+  --accent-light: rgba(25, 118, 210, 0.15);
+  --accent-border: rgba(25, 118, 210, 0.4);
+  --text-primary: #f5f5f5;
+  --text-secondary: #bdbdbd;
+  --text-muted: #757575;
   --success: #10b981;
   --danger: #ef4444;
 }
@@ -41,7 +41,7 @@ body {
   height: 100%;
   padding: 32px 28px;
   gap: 22px;
-  background: radial-gradient(circle at top center, rgba(124,58,237,0.12) 0%, transparent 70%);
+  background: radial-gradient(circle at top center, rgba(25,118,210,0.16) 0%, transparent 70%);
 }
 
 .login-brand {
@@ -54,13 +54,13 @@ body {
 .login-logo {
   width: 52px;
   height: 52px;
-  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  background: linear-gradient(135deg, #1976d2, #42a5f5);
   border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
-  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 8px 24px rgba(25, 118, 210, 0.4);
 }
 
 .login-logo svg {
@@ -116,7 +116,7 @@ body {
 
 .field-input:focus {
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
 }
 
 .field-input::placeholder {
@@ -132,7 +132,7 @@ body {
 }
 
 .login-btn {
-  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  background: linear-gradient(135deg, #1976d2, #1565c0);
   border: none;
   border-radius: 9px;
   color: #fff;
@@ -143,11 +143,11 @@ body {
   transition: all 0.2s ease;
   width: 100%;
   margin-top: 4px;
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
 }
 
 .login-btn:hover {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  background: linear-gradient(135deg, #42a5f5, #1976d2);
   transform: translateY(-1px);
 }
 
@@ -206,7 +206,7 @@ body {
   font-size: 10px;
   background: var(--accent-light);
   border: 1px solid var(--accent-border);
-  color: #c4b5fd;
+  color: #90caf9;
   border-radius: 4px;
   padding: 1px 5px;
   font-weight: 600;
@@ -302,9 +302,9 @@ body {
 
 .selection-badge {
   font-size: 9.5px;
-  background: rgba(124, 58, 237, 0.25);
-  border: 1px solid rgba(124, 58, 237, 0.5);
-  color: #d8b4fe;
+  background: rgba(25, 118, 210, 0.25);
+  border: 1px solid rgba(25, 118, 210, 0.5);
+  color: #90caf9;
   border-radius: 4px;
   padding: 1px 6px;
   white-space: nowrap;
@@ -313,7 +313,7 @@ body {
 
 @keyframes pulseBadge {
   0%, 100% { opacity: 0.8; }
-  50% { opacity: 1; border-color: #c084fc; }
+  50% { opacity: 1; border-color: #42a5f5; }
 }
 
 /* ─── Action Chips ────────────────────────────────────────── */
@@ -348,7 +348,7 @@ body {
 .chip:hover {
   background: var(--accent-light);
   border-color: var(--accent-border);
-  color: #c4b5fd;
+  color: #90caf9;
   transform: translateY(-1px);
 }
 
@@ -422,8 +422,8 @@ body {
   justify-content: center;
   gap: 4px;
   padding: 8px 12px;
-  background: rgba(124, 58, 237, 0.1);
-  border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+  background: rgba(25, 118, 210, 0.1);
+  border-bottom: 1px solid rgba(25, 118, 210, 0.2);
 }
 
 .wave-bar {
@@ -448,7 +448,7 @@ body {
 .listening-label {
   font-size: 11px;
   font-weight: 600;
-  color: #c4b5fd;
+  color: #90caf9;
   margin-left: 6px;
 }
 
@@ -512,7 +512,7 @@ body {
   background: var(--accent-color);
   border-color: var(--accent-color);
   color: #fff;
-  box-shadow: 0 0 16px rgba(124, 58, 237, 0.6);
+  box-shadow: 0 0 16px rgba(25, 118, 210, 0.6);
 }
 
 .mic-button.active .mic-pulse {
@@ -542,7 +542,7 @@ body {
 
 .input-wrapper:focus-within {
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.15);
+  box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.15);
 }
 
 .input-wrapper input {
@@ -583,4 +583,3 @@ body {
   width: 12px;
   height: 12px;
 }
-

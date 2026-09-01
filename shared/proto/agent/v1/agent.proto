@@ -15,6 +15,42 @@ message StartConversationResponse {
   string conversation_id = 2;
 }
 
+message ListConversationsRequest {
+  jarvis.common.v1.RequestContext context = 1;
+  uint32 limit = 2;
+}
+
+message ConversationSummary {
+  string conversation_id = 1;
+  string title = 2;
+  int64 created_at_epoch_millis = 3;
+  int64 updated_at_epoch_millis = 4;
+  uint32 message_count = 5;
+  string last_message = 6;
+}
+
+message ListConversationsResponse {
+  jarvis.common.v1.OperationStatus status = 1;
+  repeated ConversationSummary conversations = 2;
+}
+
+message GetConversationMessagesRequest {
+  jarvis.common.v1.RequestContext context = 1;
+  string conversation_id = 2;
+}
+
+message ConversationMessage {
+  string message_id = 1;
+  string role = 2;
+  string content = 3;
+  int64 created_at_epoch_millis = 4;
+}
+
+message GetConversationMessagesResponse {
+  jarvis.common.v1.OperationStatus status = 1;
+  repeated ConversationMessage messages = 2;
+}
+
 message BrowserContext {
   string url = 1;
   string title = 2;
@@ -79,10 +115,20 @@ message SearchMemoryResponse {
   repeated MemoryResult results = 2;
 }
 
+message ListMemoriesRequest { jarvis.common.v1.RequestContext context = 1; string category = 2; uint32 limit = 3; }
+message MemoryItem { string memory_id = 1; string content = 2; string category = 3; int64 created_at_epoch_millis = 4; }
+message ListMemoriesResponse { jarvis.common.v1.OperationStatus status = 1; repeated MemoryItem memories = 2; }
+message DeleteMemoryRequest { jarvis.common.v1.RequestContext context = 1; string memory_id = 2; }
+message DeleteMemoryResponse { jarvis.common.v1.OperationStatus status = 1; bool deleted = 2; }
+
 service AgentService {
   rpc StartConversation(StartConversationRequest) returns (StartConversationResponse);
+  rpc ListConversations(ListConversationsRequest) returns (ListConversationsResponse);
+  rpc GetConversationMessages(GetConversationMessagesRequest) returns (GetConversationMessagesResponse);
   rpc SendVoiceCommand(SendVoiceCommandRequest) returns (stream AgentResponseChunk);
   rpc StreamAgentResponse(StreamAgentResponseRequest) returns (stream AgentResponseChunk);
   rpc SaveMemory(SaveMemoryRequest) returns (SaveMemoryResponse);
   rpc SearchMemory(SearchMemoryRequest) returns (SearchMemoryResponse);
+  rpc ListMemories(ListMemoriesRequest) returns (ListMemoriesResponse);
+  rpc DeleteMemory(DeleteMemoryRequest) returns (DeleteMemoryResponse);
 }

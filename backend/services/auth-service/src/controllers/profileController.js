@@ -8,7 +8,7 @@ export function createProfileController({ authService }) {
         },
         async updateProfile(req, res, next) {
             try {
-                const result = await authService.updateProfile({ userId: req.auth.user.id, displayName: req.body?.displayName });
+                const result = await authService.updateProfile({ userId: req.auth.user.id, displayName: req.body?.displayName, voicePreference: req.body?.voicePreference });
                 res.status(result.status.ok ? 200 : 400).json(result);
             } catch (error) { next(error); }
         }

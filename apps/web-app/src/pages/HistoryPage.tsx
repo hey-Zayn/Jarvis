@@ -1,11 +1,10 @@
-import { useState } from 'react';
-import { Sidebar } from '@/components/layout/Sidebar';
-import { Header } from '@/components/layout/Header';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MessageSquare, Search, Trash2, Clock, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { apiClient } from '@/lib/api';
 
 interface ConversationItem {
   id: string;
@@ -15,34 +14,25 @@ interface ConversationItem {
   updatedAt: string;
 }
 
-const mockConversations: ConversationItem[] = [
-  {
-    id: 'conv-1',
-    title: 'Distributed Rust Services Architecture',
-    lastMessage: 'Here is a breakdown of gRPC streaming with Protobuf contracts...',
-    turnCount: 6,
-    updatedAt: '10 mins ago'
-  },
-  {
-    id: 'conv-2',
-    title: 'Daily Schedule & Weather in Seattle',
-    lastMessage: 'The weather in Seattle is 21°C and partly cloudy today.',
-    turnCount: 3,
-    updatedAt: '2 hours ago'
-  },
-  {
-    id: 'conv-3',
-    title: 'Complex Math & Token Latency Calculations',
-    lastMessage: '45 * 18 + 120 = 930 with sub-200ms first chunk latency.',
-    turnCount: 4,
-    updatedAt: 'Yesterday'
-  }
-];
-
 export function HistoryPage() {
-  const [conversations, setConversations] = useState<ConversationItem[]>(mockConversations);
+  const [conversations, setConversations] = useState<ConversationItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    apiClient.listConversations().then((response) => {
+      if (response.status?.ok) {
+        setConversations((response.conversations || []).map((conversation: { conversationId: string; title: string; lastMessage: string; messageCount: number; updatedAtEpochMillis: string }) => ({
+          id: conversation.conversationId,
+          title: conversation.title,
+          lastMessage: conversation.lastMessage,
+          turnCount: conversation.messageCount,
+          updatedAt: new Date(Number(conversation.updatedAtEpochMillis)).toLocaleString()
+        })));
+      }
+    }).catch((error) => console.error('[HistoryPage] Failed to load conversations:', error)).finally(() => setIsLoading(false));
+  }, []);
 
   const filtered = conversations.filter(c =>
     c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -55,11 +45,7 @@ export function HistoryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex">
-      <Sidebar />
-      <div className="flex-1 flex flex-col min-w-0 pl-16 md:pl-64">
-        <Header />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+    <div className="space-y-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold text-zinc-100">Conversation History</h1>
@@ -78,7 +64,9 @@ export function HistoryPage() {
           </div>
 
           <div className="space-y-3">
-            {filtered.length === 0 ? (
+            {isLoading ? (
+              <Card className="bg-zinc-900/50 border-zinc-800 text-center py-12"><CardContent><p className="text-zinc-400 text-sm">Loading conversation history...</p></CardContent></Card>
+            ) : filtered.length === 0 ? (
               <Card className="bg-zinc-900/50 border-zinc-800 text-center py-12">
                 <CardContent className="space-y-3">
                   <MessageSquare className="h-10 w-10 text-zinc-600 mx-auto" />
@@ -94,7 +82,7 @@ export function HistoryPage() {
                   transition={{ delay: idx * 0.05 }}
                 >
                   <Card
-                    onClick={() => navigate('/workspace')}
+                    onClick={() => navigate(`/workspace?conversationId=${encodeURIComponent(item.id)}`)}
                     className="bg-zinc-900/40 hover:bg-zinc-900/80 border-zinc-800 hover:border-violet-500/40 transition-all cursor-pointer group"
                   >
                     <CardHeader className="p-4 flex flex-row items-center justify-between">
@@ -135,8 +123,6 @@ export function HistoryPage() {
               ))
             )}
           </div>
-        </main>
-      </div>
     </div>
   );
 }

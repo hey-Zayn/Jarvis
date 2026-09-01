@@ -18,7 +18,10 @@ export function createRateLimiter({ windowMs = DEFAULT_WINDOW_MS, maxRequests = 
 
     return async function rateLimiter(req, res, next) {
         const ip = req.ip || req.headers['x-forwarded-for'] || 'unknown';
-        const key = `ratelimit:${ip}`;
+        // Keep quotas isolated by endpoint. Dashboard hydration must not consume
+        // the login/register quota for the same browser IP.
+        const route = `${req.method}:${req.baseUrl || ''}${req.path || req.url}`;
+        const key = `ratelimit:${ip}:${route}`;
 
         try {
             if (redis.status === 'wait') {

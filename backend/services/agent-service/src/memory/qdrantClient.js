@@ -3,13 +3,13 @@
  * Connects to Qdrant REST API on port 6333 with automatic collection setup and fallback in-memory store.
  */
 export class QdrantClient {
-  constructor({
-    host = process.env.QDRANT_HOST || 'localhost',
+    constructor({
+    host = process.env.QDRANT_HOST || 'qdrant',
     port = parseInt(process.env.QDRANT_PORT) || 6333,
     collectionName = 'jarvis_memories',
     vectorDimension = 384
   } = {}) {
-    this.baseUrl = `http://${host}:${port}`;
+    this.baseUrl = process.env.QDRANT_URL || `http://${host}:${port}`;
     this.collectionName = collectionName;
     this.vectorDimension = vectorDimension;
     this.isInitialized = false;

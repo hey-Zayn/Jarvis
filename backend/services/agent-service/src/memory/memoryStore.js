@@ -1,6 +1,9 @@
 import crypto from 'crypto';
 import { EmbeddingProvider } from '../embeddings/embeddingProvider.js';
 import { QdrantClient } from './qdrantClient.js';
+import { prisma } from '../lib/prisma.js';
+
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export class MemoryStore {
   constructor({
@@ -22,7 +25,7 @@ export class MemoryStore {
       throw new Error('Memory content is required');
     }
 
-    const memoryId = `mem-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    const memoryId = crypto.randomUUID();
     const vector = await this.embeddingProvider.generateEmbedding(content);
 
     const payload = {
@@ -35,11 +38,18 @@ export class MemoryStore {
     };
 
     // Upsert into vector database
+    const vectorId = crypto.randomUUID();
     await this.qdrantClient.upsertPoint({
-      id: crypto.randomUUID(),
+      id: vectorId,
       vector,
       payload
     });
+
+    if (UUID_PATTERN.test(userId)) {
+      await prisma.memory.create({
+        data: { id: memoryId, userId, content, category, metadata, vectorId }
+      });
+    }
 
     return {
       memoryId,
@@ -79,9 +89,11 @@ export class MemoryStore {
   /**
    * Delete memory
    */
-  async delete({ memoryId }) {
+  async delete({ memoryId, userId }) {
     if (!memoryId) return false;
-    return await this.qdrantClient.deletePoint(memoryId);
+    const memory = await prisma.memory.findFirst({ where: { id: memoryId, ...(userId ? { userId } : {}) }, select: { vectorId: true } });
+    if (memory) await prisma.memory.delete({ where: { id: memoryId } });
+    return await this.qdrantClient.deletePoint(memory?.vectorId || memoryId);
   }
 
   /**

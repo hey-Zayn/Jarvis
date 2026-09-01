@@ -3,6 +3,16 @@ generator client {
   output   = "../../backend/services/auth-service/src/generated/prisma"
 }
 
+generator agentClient {
+  provider = "prisma-client-js"
+  output   = "../../backend/services/agent-service/src/generated/prisma"
+}
+
+generator workerClient {
+  provider = "prisma-client-js"
+  output   = "../../backend/services/worker-service/src/generated/prisma"
+}
+
 datasource db {
   provider = "postgresql"
 }
@@ -11,6 +21,7 @@ model User {
   id            String         @id @default(uuid()) @db.Uuid
   email         String         @unique
   displayName   String?
+  voicePreference String        @default("female")
   passwordHash  String
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt

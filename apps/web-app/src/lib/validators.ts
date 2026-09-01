@@ -10,6 +10,7 @@ export const registerSchema = z.object({
   displayName: z.string().min(1, 'Display name is required').max(100, 'Display name too long'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   confirmPassword: z.string(),
+  voicePreference: z.enum(['female', 'male']).default('female'),
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'Passwords do not match',
   path: ['confirmPassword'],

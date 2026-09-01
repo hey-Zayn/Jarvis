@@ -1,4 +1,6 @@
 const okStatus = (message) => ({ ok: true, message });
+import { prisma } from '../lib/prisma.js';
+import { invalidateConversationCache } from '../cache/redisCache.js';
 
 // Redis connection configuration
 let redisConnection = {
@@ -41,8 +43,16 @@ let queues = {
         queues.analytics = new Queue('analytics', { connection: redisConnection });
 
         new Worker('conversation-persist', async (job) => {
-            const { conversationId, turnId } = job.data;
-            console.log(`[Worker Service] [conversation-persist] Processing turn ${turnId} for conversation ${conversationId}`);
+            const { conversationId, turnId, transcript, agentResponse, userId, timestamp } = job.data;
+            if (!conversationId || !userId) throw new Error('conversationId and userId are required');
+            const conversation = await prisma.conversation.findFirst({ where: { id: conversationId, userId } });
+            if (!conversation) throw new Error('Conversation not found for authenticated user');
+            await prisma.$transaction([
+                prisma.message.create({ data: { conversationId, role: 'user', content: transcript || '', createdAt: new Date(timestamp || Date.now()) } }),
+                prisma.message.create({ data: { conversationId, role: 'assistant', content: agentResponse || '' } }),
+                prisma.conversation.update({ where: { id: conversationId }, data: { updatedAt: new Date() } })
+            ]);
+            await invalidateConversationCache(userId, conversationId);
             return { status: 'persisted', conversationId, turnId };
         }, { connection: redisConnection });
 
