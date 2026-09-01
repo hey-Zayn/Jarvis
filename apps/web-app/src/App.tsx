@@ -9,6 +9,7 @@ import { Workspace } from '@/pages/Workspace';
 import { HistoryPage } from '@/pages/HistoryPage';
 import { MemoryPage } from '@/pages/MemoryPage';
 import { SettingsPage } from '@/pages/SettingsPage';
+import { Dashboard } from '@/pages/Dashboard';
 import { ProtectedRoute, PublicRoute } from '@/components/auth/ProtectedRoute';
 
 export default function App() {
@@ -23,10 +24,13 @@ export default function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
           </Route>
           <Route element={<ProtectedRoute />}>
-            <Route path="/workspace" element={<Workspace />} />
-            <Route path="/history" element={<HistoryPage />} />
-            <Route path="/memory" element={<MemoryPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
+            <Route element={<Dashboard />}>
+              <Route path="/dashboard" element={<Navigate to="/workspace" replace />} />
+              <Route path="/workspace" element={<Workspace />} />
+              <Route path="/history" element={<HistoryPage />} />
+              <Route path="/memory" element={<MemoryPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+            </Route>
           </Route>
           <Route path="/" element={<Navigate to="/workspace" replace />} />
           <Route path="*" element={<Navigate to="/workspace" replace />} />

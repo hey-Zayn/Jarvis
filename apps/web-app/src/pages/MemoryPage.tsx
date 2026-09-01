@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { Sidebar } from '@/components/layout/Sidebar';
-import { Header } from '@/components/layout/Header';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Brain, Plus, Search, Trash2 } from 'lucide-react';
@@ -93,11 +91,7 @@ export function MemoryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex">
-      <Sidebar />
-      <div className="flex-1 flex flex-col min-w-0 pl-16 md:pl-64">
-        <Header />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+    <div className="space-y-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="flex items-center gap-2">
@@ -171,7 +165,7 @@ export function MemoryPage() {
                   onClick={() => setSelectedCategory(cat.id)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                     selectedCategory === cat.id
-                      ? 'bg-violet-600 text-white shadow-[0_0_15px_rgba(139,92,246,0.3)]'
+                      ? 'bg-violet-600 text-white shadow-[0_0_15px_rgba(25,118,210,0.3)]'
                       : 'bg-zinc-900 text-zinc-400 hover:text-zinc-200 border border-zinc-800'
                   }`}
                 >
@@ -230,8 +224,6 @@ export function MemoryPage() {
               ))
             )}
           </div>
-        </main>
-      </div>
     </div>
   );
 }

@@ -457,7 +457,7 @@ export function VoiceWorkspace() {
               <div
                 className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                   msg.role === 'user'
-                    ? 'bg-violet-600 text-white shadow-[0_0_20px_rgba(139,92,246,0.25)] rounded-br-none'
+                    ? 'bg-violet-600 text-white shadow-[0_0_20px_rgba(25,118,210,0.25)] rounded-br-none'
                     : 'bg-zinc-950/90 text-zinc-200 border border-zinc-800 rounded-bl-none shadow-md'
                 }`}
               >
@@ -551,7 +551,7 @@ export function VoiceWorkspace() {
           onClick={handleVoiceToggle}
           className={`relative flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full transition-all duration-300 ${
             isListening
-              ? 'bg-violet-600 shadow-[0_0_25px_rgba(139,92,246,0.8)] text-white'
+              ? 'bg-violet-600 shadow-[0_0_25px_rgba(25,118,210,0.8)] text-white'
               : 'bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-300'
           }`}
           aria-label={isListening ? 'Stop listening' : 'Start listening'}

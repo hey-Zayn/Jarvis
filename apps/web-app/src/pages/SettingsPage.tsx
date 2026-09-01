@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { Sidebar } from '@/components/layout/Sidebar';
-import { Header } from '@/components/layout/Header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Activity, Mic, Cpu, RefreshCw, CheckCircle2 } from 'lucide-react';
@@ -26,11 +24,7 @@ export function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex">
-      <Sidebar />
-      <div className="flex-1 flex flex-col min-w-0 pl-16 md:pl-64">
-        <Header />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+    <div className="space-y-6">
           <div>
             <h1 className="text-2xl font-bold text-zinc-100">Settings & Developer Debug</h1>
             <p className="text-sm text-zinc-400">Configure voice parameters and inspect microservice infrastructure health</p>
@@ -59,7 +53,7 @@ export function SettingsPage() {
                         onClick={() => setSelectedModel(m.id)}
                         className={`p-3.5 rounded-lg border cursor-pointer transition-all ${
                           selectedModel === m.id
-                            ? 'bg-violet-600/20 border-violet-500 text-zinc-100 shadow-[0_0_15px_rgba(139,92,246,0.2)]'
+                            ? 'bg-violet-600/20 border-violet-500 text-zinc-100 shadow-[0_0_15px_rgba(25,118,210,0.2)]'
                             : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:border-zinc-700'
                         }`}
                       >
@@ -154,8 +148,6 @@ export function SettingsPage() {
               </Card>
             </div>
           </div>
-        </main>
-      </div>
     </div>
   );
 }

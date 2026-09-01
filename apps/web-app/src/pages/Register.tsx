@@ -1,16 +1,24 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, type ChangeEvent } from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff, Shield } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { AuthLayout } from '@/components/auth/AuthLayout';
+import { AutoAwesome, CheckCircle, Visibility, VisibilityOff } from '@mui/icons-material';
+import {
+  Box,
+  Button,
+  Container,
+  IconButton,
+  InputAdornment,
+  LinearProgress,
+  Link,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { useAuthStore } from '@/store/authStore';
 import { registerSchema, type RegisterInput } from '@/lib/validators';
 import { toast } from '@/hooks/useToast';
-import { cn } from '@/lib/utils';
 
 export function Register() {
   const navigate = useNavigate();
@@ -19,32 +27,19 @@ export function Register() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [password, setPassword] = useState('');
 
-  const getPasswordStrength = (pwd: string) => {
-    let strength = 0;
-    if (pwd.length >= 8) strength++;
-    if (/[A-Z]/.test(pwd)) strength++;
-    if (/[a-z]/.test(pwd)) strength++;
-    if (/[0-9]/.test(pwd)) strength++;
-    if (/[^A-Za-z0-9]/.test(pwd)) strength++;
-    return Math.min(strength, 4);
+  const getPasswordStrength = (value: string) => {
+    let score = 0;
+    if (value.length >= 8) score++;
+    if (/[A-Z]/.test(value)) score++;
+    if (/[a-z]/.test(value)) score++;
+    if (/[0-9]/.test(value)) score++;
+    if (/[^A-Za-z0-9]/.test(value)) score++;
+    return Math.min(score, 4);
   };
 
   const strength = getPasswordStrength(password);
   const strengthLabels = ['Very weak', 'Weak', 'Fair', 'Strong', 'Very strong'];
-  const strengthColors = [
-    'bg-gruvbox-red',
-    'bg-gruvbox-orange',
-    'bg-gruvbox-yellow',
-    'bg-gruvbox-lime',
-    'bg-gruvbox-green',
-  ];
-
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<RegisterInput>({
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
   });
 
@@ -59,135 +54,70 @@ export function Register() {
     }
   };
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+  const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
     setPassword(value);
-    setValue('password', value, { shouldValidate: true });
+    setValue('password', value, { shouldValidate: true, shouldDirty: true });
   };
 
+  const passwordAdornment = (visible: boolean, toggle: () => void, label: string) => (
+    <InputAdornment position="end">
+      <IconButton onClick={toggle} edge="end" disabled={isLoading} aria-label={label}>
+        {visible ? <VisibilityOff /> : <Visibility />}
+      </IconButton>
+    </InputAdornment>
+  );
+
   return (
-    <AuthLayout
-      title="Create your account"
-      description="Start your journey with Jarvis today"
-      footer={
-        <p className="text-sm text-gruvbox-gray">
-          Already have an account?{' '}
-          <Link to="/login" className="text-gruvbox-green hover:text-gruvbox-green-light font-medium">
-            Sign in
-          </Link>
-        </p>
-      }
-    >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-        <div className="space-y-1.5">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            autoComplete="email"
-            placeholder="you@example.com"
-            {...register('email')}
-            error={errors.email?.message}
-            disabled={isLoading}
-          />
-        </div>
+    <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', py: { xs: 4, sm: 6 }, background: 'radial-gradient(circle at 50% -10%, rgba(25, 118, 210, 0.18), transparent 38%), #121212' }}>
+      <Container maxWidth="sm">
+        <Stack spacing={3} sx={{ alignItems: 'center' }}>
+          <Stack spacing={1.5} sx={{ alignItems: 'center', textAlign: 'center' }}>
+            <Box sx={{ width: 52, height: 52, display: 'grid', placeItems: 'center', borderRadius: 2.5, color: 'primary.main', bgcolor: 'rgba(25, 118, 210, 0.14)', border: '1px solid rgba(25, 118, 210, 0.3)' }}>
+              <AutoAwesome />
+            </Box>
+            <Box>
+              <Typography variant="h4" sx={{ fontWeight: 700, letterSpacing: '-0.03em' }}>Create your account</Typography>
+              <Typography color="text.secondary" sx={{ mt: 1 }}>Set up your Jarvis workspace in a few steps.</Typography>
+            </Box>
+          </Stack>
 
-        <div className="space-y-1.5">
-          <Label htmlFor="displayName">Display Name</Label>
-          <Input
-            id="displayName"
-            type="text"
-            autoComplete="name"
-            placeholder="John Doe"
-            maxLength={100}
-            {...register('displayName')}
-            error={errors.displayName?.message}
-            disabled={isLoading}
-          />
-        </div>
+          <Paper component="section" elevation={0} sx={{ width: '100%', p: { xs: 3, sm: 4 }, borderRadius: 3, bgcolor: 'rgba(30, 30, 30, 0.82)', border: '1px solid rgba(255, 255, 255, 0.09)', boxShadow: '0 24px 80px rgba(0, 0, 0, 0.28)', backdropFilter: 'blur(18px)' }}>
+            <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+              <Stack spacing={2.25}>
+                <TextField {...register('displayName')} id="displayName" label="Display name" type="text" autoComplete="name" fullWidth autoFocus disabled={isLoading} error={Boolean(errors.displayName)} helperText={errors.displayName?.message} slotProps={{ htmlInput: { maxLength: 100 } }} />
+                <TextField {...register('email')} id="email" label="Email address" type="email" autoComplete="email" fullWidth disabled={isLoading} error={Boolean(errors.email)} helperText={errors.email?.message} />
 
-        <div className="space-y-1.5">
-          <Label htmlFor="password">Password</Label>
-          <div className="relative">
-            <Input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="new-password"
-              placeholder="••••••••"
-              {...register('password')}
-              error={errors.password?.message}
-              disabled={isLoading}
-              onChange={handlePasswordChange}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gruvbox-gray hover:text-gruvbox-fg transition-colors"
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-            </button>
-          </div>
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-gruvbox-gray">Strength: {strengthLabels[strength]}</span>
-              <Shield className="h-3 w-3 text-gruvbox-green" />
-            </div>
-            <div className="h-1.5 bg-gruvbox-bg1 rounded-full overflow-hidden">
-              <div
-                className={cn(
-                  'h-full transition-all duration-300 ease-out',
-                  strengthColors[strength]
-                )}
-                style={{ width: `${(strength / 4) * 100}%` }}
-              />
-            </div>
-            <p className="text-xs text-gruvbox-gray">
-              {password.length < 8
-                ? 'Password must be at least 8 characters'
-                : 'Add uppercase, lowercase, numbers, and symbols for maximum strength'}
-            </p>
-          </div>
-        </div>
+                <Box>
+                  <TextField {...register('password')} id="password" label="Password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" fullWidth disabled={isLoading} error={Boolean(errors.password)} helperText={errors.password?.message} onChange={handlePasswordChange} slotProps={{ input: { endAdornment: passwordAdornment(showPassword, () => setShowPassword((visible) => !visible), showPassword ? 'Hide password' : 'Show password') } }} />
+                  <Stack spacing={1} sx={{ mt: 1.25 }}>
+                    <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant="caption" color="text.secondary">Password strength: {strengthLabels[strength]}</Typography>
+                      <CheckCircle sx={{ fontSize: 16, color: strength >= 3 ? 'primary.light' : 'text.secondary' }} />
+                    </Stack>
+                    <LinearProgress variant="determinate" value={(strength / 4) * 100} sx={{ height: 5, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.1)', '& .MuiLinearProgress-bar': { borderRadius: 3 } }} />
+                    <Typography variant="caption" color="text.secondary">
+                      {password.length < 8 ? 'Use at least 8 characters.' : 'Add uppercase, lowercase, numbers, and symbols for maximum strength.'}
+                    </Typography>
+                  </Stack>
+                </Box>
 
-        <div className="space-y-1.5">
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <div className="relative">
-            <Input
-              id="confirmPassword"
-              type={showConfirmPassword ? 'text' : 'password'}
-              autoComplete="new-password"
-              placeholder="••••••••"
-              {...register('confirmPassword')}
-              error={errors.confirmPassword?.message}
-              disabled={isLoading}
-            />
-            <button
-              type="button"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gruvbox-gray hover:text-gruvbox-fg transition-colors"
-              aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
-            >
-              {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-            </button>
-          </div>
-        </div>
+                <TextField {...register('confirmPassword')} id="confirmPassword" label="Confirm password" type={showConfirmPassword ? 'text' : 'password'} autoComplete="new-password" fullWidth disabled={isLoading} error={Boolean(errors.confirmPassword)} helperText={errors.confirmPassword?.message} slotProps={{ input: { endAdornment: passwordAdornment(showConfirmPassword, () => setShowConfirmPassword((visible) => !visible), showConfirmPassword ? 'Hide password' : 'Show password') } }} />
 
-        <Button type="submit" className="w-full" size="lg" loading={isLoading}>
-          {isLoading ? 'Creating account...' : 'Create account'}
-        </Button>
+                <Button type="submit" variant="contained" size="large" fullWidth disabled={isLoading} sx={{ minHeight: 48, mt: 0.5, fontWeight: 700 }}>{isLoading ? 'Creating account…' : 'Create account'}</Button>
 
-        <p className="text-xs text-center text-gruvbox-gray">
-          By creating an account, you agree to our{' '}
-          <Link to="/terms" className="text-gruvbox-green hover:text-gruvbox-green-light underline">
-            Terms of Service
-          </Link>{' '}
-          and{' '}
-          <Link to="/privacy" className="text-gruvbox-green hover:text-gruvbox-green-light underline">
-            Privacy Policy
-          </Link>
-        </p>
-      </form>
-    </AuthLayout>
+                <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'center', lineHeight: 1.6 }}>
+                  By creating an account, you agree to our <Link component={RouterLink} to="/terms" color="primary.light" underline="hover">Terms of Service</Link> and <Link component={RouterLink} to="/privacy" color="primary.light" underline="hover">Privacy Policy</Link>.
+                </Typography>
+              </Stack>
+            </Box>
+          </Paper>
+
+          <Typography color="text.secondary" variant="body2" sx={{ textAlign: 'center' }}>
+            Already have an account? <Link component={RouterLink} to="/login" color="primary.light" underline="hover" sx={{ fontWeight: 600 }}>Sign in</Link>
+          </Typography>
+        </Stack>
+      </Container>
+    </Box>
   );
 }
