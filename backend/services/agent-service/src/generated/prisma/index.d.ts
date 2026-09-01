@@ -1351,6 +1351,7 @@ export namespace Prisma {
     id: string | null
     email: string | null
     displayName: string | null
+    voicePreference: string | null
     passwordHash: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -1360,6 +1361,7 @@ export namespace Prisma {
     id: string | null
     email: string | null
     displayName: string | null
+    voicePreference: string | null
     passwordHash: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -1369,6 +1371,7 @@ export namespace Prisma {
     id: number
     email: number
     displayName: number
+    voicePreference: number
     passwordHash: number
     createdAt: number
     updatedAt: number
@@ -1380,6 +1383,7 @@ export namespace Prisma {
     id?: true
     email?: true
     displayName?: true
+    voicePreference?: true
     passwordHash?: true
     createdAt?: true
     updatedAt?: true
@@ -1389,6 +1393,7 @@ export namespace Prisma {
     id?: true
     email?: true
     displayName?: true
+    voicePreference?: true
     passwordHash?: true
     createdAt?: true
     updatedAt?: true
@@ -1398,6 +1403,7 @@ export namespace Prisma {
     id?: true
     email?: true
     displayName?: true
+    voicePreference?: true
     passwordHash?: true
     createdAt?: true
     updatedAt?: true
@@ -1480,6 +1486,7 @@ export namespace Prisma {
     id: string
     email: string
     displayName: string | null
+    voicePreference: string
     passwordHash: string
     createdAt: Date
     updatedAt: Date
@@ -1506,6 +1513,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     displayName?: boolean
+    voicePreference?: boolean
     passwordHash?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -1519,6 +1527,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     displayName?: boolean
+    voicePreference?: boolean
     passwordHash?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -1528,6 +1537,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     displayName?: boolean
+    voicePreference?: boolean
     passwordHash?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -1537,12 +1547,13 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     displayName?: boolean
+    voicePreference?: boolean
     passwordHash?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "displayName" | "passwordHash" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "displayName" | "voicePreference" | "passwordHash" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     conversations?: boolean | User$conversationsArgs<ExtArgs>
@@ -1563,6 +1574,7 @@ export namespace Prisma {
       id: string
       email: string
       displayName: string | null
+      voicePreference: string
       passwordHash: string
       createdAt: Date
       updatedAt: Date
@@ -1995,6 +2007,7 @@ export namespace Prisma {
     readonly id: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
     readonly displayName: FieldRef<"User", 'String'>
+    readonly voicePreference: FieldRef<"User", 'String'>
     readonly passwordHash: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
@@ -6829,6 +6842,7 @@ export namespace Prisma {
     id: 'id',
     email: 'email',
     displayName: 'displayName',
+    voicePreference: 'voicePreference',
     passwordHash: 'passwordHash',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -6997,6 +7011,7 @@ export namespace Prisma {
     id?: UuidFilter<"User"> | string
     email?: StringFilter<"User"> | string
     displayName?: StringNullableFilter<"User"> | string | null
+    voicePreference?: StringFilter<"User"> | string
     passwordHash?: StringFilter<"User"> | string
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
@@ -7009,6 +7024,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     displayName?: SortOrderInput | SortOrder
+    voicePreference?: SortOrder
     passwordHash?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7024,6 +7040,7 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     displayName?: StringNullableFilter<"User"> | string | null
+    voicePreference?: StringFilter<"User"> | string
     passwordHash?: StringFilter<"User"> | string
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
@@ -7036,6 +7053,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     displayName?: SortOrderInput | SortOrder
+    voicePreference?: SortOrder
     passwordHash?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7051,6 +7069,7 @@ export namespace Prisma {
     id?: UuidWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
     displayName?: StringNullableWithAggregatesFilter<"User"> | string | null
+    voicePreference?: StringWithAggregatesFilter<"User"> | string
     passwordHash?: StringWithAggregatesFilter<"User"> | string
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -7303,6 +7322,7 @@ export namespace Prisma {
     id?: string
     email: string
     displayName?: string | null
+    voicePreference?: string
     passwordHash: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -7315,6 +7335,7 @@ export namespace Prisma {
     id?: string
     email: string
     displayName?: string | null
+    voicePreference?: string
     passwordHash: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -7327,6 +7348,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7339,6 +7361,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7351,6 +7374,7 @@ export namespace Prisma {
     id?: string
     email: string
     displayName?: string | null
+    voicePreference?: string
     passwordHash: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -7360,6 +7384,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7369,6 +7394,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -7718,6 +7744,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     displayName?: SortOrder
+    voicePreference?: SortOrder
     passwordHash?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7727,6 +7754,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     displayName?: SortOrder
+    voicePreference?: SortOrder
     passwordHash?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -7736,6 +7764,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     displayName?: SortOrder
+    voicePreference?: SortOrder
     passwordHash?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -8599,6 +8628,7 @@ export namespace Prisma {
     id?: string
     email: string
     displayName?: string | null
+    voicePreference?: string
     passwordHash: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8610,6 +8640,7 @@ export namespace Prisma {
     id?: string
     email: string
     displayName?: string | null
+    voicePreference?: string
     passwordHash: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8637,6 +8668,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8648,6 +8680,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8659,6 +8692,7 @@ export namespace Prisma {
     id?: string
     email: string
     displayName?: string | null
+    voicePreference?: string
     passwordHash: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8670,6 +8704,7 @@ export namespace Prisma {
     id?: string
     email: string
     displayName?: string | null
+    voicePreference?: string
     passwordHash: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8721,6 +8756,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8732,6 +8768,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8818,6 +8855,7 @@ export namespace Prisma {
     id?: string
     email: string
     displayName?: string | null
+    voicePreference?: string
     passwordHash: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8829,6 +8867,7 @@ export namespace Prisma {
     id?: string
     email: string
     displayName?: string | null
+    voicePreference?: string
     passwordHash: string
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8856,6 +8895,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8867,6 +8907,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

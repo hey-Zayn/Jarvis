@@ -16,12 +16,14 @@ message RegisterRequest {
   string email = 2;
   string password = 3;
   string display_name = 4;
+  string voice_preference = 5;
 }
 
 message AuthSession {
   string user_id = 1;
   string email = 2;
   string display_name = 3;
+  string voice_preference = 7;
   string access_token = 4;
   string refresh_token = 5;
   int64 expires_in_seconds = 6;
@@ -41,10 +43,11 @@ message Profile {
   string display_name = 3;
   int64 created_at_epoch_millis = 4;
   int64 updated_at_epoch_millis = 5;
+  string voice_preference = 6;
 }
 message GetProfileRequest { jarvis.common.v1.RequestContext context = 1; string access_token = 2; }
 message GetProfileResponse { jarvis.common.v1.OperationStatus status = 1; Profile profile = 2; }
-message UpdateProfileRequest { jarvis.common.v1.RequestContext context = 1; string access_token = 2; string display_name = 3; }
+message UpdateProfileRequest { jarvis.common.v1.RequestContext context = 1; string access_token = 2; string display_name = 3; string voice_preference = 4; }
 message UpdateProfileResponse { jarvis.common.v1.OperationStatus status = 1; Profile profile = 2; }
 
 service AuthService {

@@ -151,5 +151,14 @@ export function createAgentController({ agentClient }) {
                 next(error);
             }
         }
+        ,
+        async listMemories(req, res, next) {
+            try { res.json(await unary(agentClient, 'ListMemories', { context: createRequestContext(req), category: req.query.category || 'all', limit: Number(req.query.limit || 100) })); }
+            catch (error) { next(error); }
+        },
+        async deleteMemory(req, res, next) {
+            try { res.json(await unary(agentClient, 'DeleteMemory', { context: createRequestContext(req), memoryId: req.params.memoryId })); }
+            catch (error) { next(error); }
+        }
     };
 }

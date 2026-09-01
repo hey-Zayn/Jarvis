@@ -12,6 +12,8 @@ export function createAgentRoutes(controller, rateLimiter) {
     router.post('/memory', rateLimiter, controller.saveMemory);
     router.get('/memory/search', rateLimiter, controller.searchMemory);
     router.post('/memory/search', rateLimiter, controller.searchMemory);
+    router.get('/memory', rateLimiter, controller.listMemories);
+    router.delete('/memory/:memoryId', rateLimiter, controller.deleteMemory);
 
     return router;
 }

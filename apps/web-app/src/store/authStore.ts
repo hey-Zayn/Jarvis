@@ -2,10 +2,13 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { apiClient } from '@/lib/api';
 
+let hydrationPromise: Promise<void> | null = null;
+
 export interface User {
   id: string;
   email: string;
   displayName: string;
+  voicePreference: 'female' | 'male';
   avatar?: string;
   createdAt: string;
   updatedAt: string;
@@ -21,7 +24,7 @@ export interface AuthState {
   error: string | null;
 
   login: (credentials: { email: string; password: string }) => Promise<void>;
-  register: (data: { email: string; password: string; displayName: string }) => Promise<void>;
+  register: (data: { email: string; password: string; displayName: string; voicePreference: 'female' | 'male' }) => Promise<void>;
   logout: () => void;
   refreshAccessToken: () => Promise<void>;
   hydrate: () => Promise<void>;
@@ -46,12 +49,13 @@ export const useAuthStore = create<AuthState>()(
           const response = await apiClient.login(credentials);
 
           if (response.status?.ok && response.session) {
-            const { userId, email, displayName, accessToken, refreshToken } = response.session;
+            const { userId, email, displayName, voicePreference, accessToken, refreshToken } = response.session;
             set({
               user: {
                 id: userId,
                 email,
                 displayName: displayName || '',
+                voicePreference: voicePreference === 'male' ? 'male' : 'female',
                 createdAt: '',
                 updatedAt: '',
               },
@@ -75,12 +79,13 @@ export const useAuthStore = create<AuthState>()(
         try {
           const response = await apiClient.register(data);
           if (response.status?.ok && response.session) {
-            const { userId, email, displayName, accessToken, refreshToken } = response.session;
+            const { userId, email, displayName, voicePreference, accessToken, refreshToken } = response.session;
             set({
               user: {
                 id: userId,
                 email,
                 displayName: displayName || '',
+                voicePreference: voicePreference === 'male' ? 'male' : 'female',
                 createdAt: '',
                 updatedAt: '',
               },
@@ -127,6 +132,9 @@ export const useAuthStore = create<AuthState>()(
       },
 
       hydrate: async () => {
+        if (hydrationPromise) return hydrationPromise;
+
+        hydrationPromise = (async () => {
         const { accessToken, refreshToken } = get();
         if (!accessToken || !refreshToken) {
           set({ isHydrating: false });
@@ -147,6 +155,7 @@ export const useAuthStore = create<AuthState>()(
                   id: p.user_id,
                   email: p.email,
                   displayName: p.display_name || '',
+                  voicePreference: p.voice_preference === 'male' ? 'male' : 'female',
                   createdAt: new Date(Number(p.created_at_epoch_millis)).toISOString(),
                   updatedAt: new Date(Number(p.updated_at_epoch_millis)).toISOString(),
                 },
@@ -161,6 +170,7 @@ export const useAuthStore = create<AuthState>()(
                 id: response.userId,
                 email: response.email,
                 displayName: '',
+                voicePreference: 'female',
                 createdAt: '',
                 updatedAt: '',
               },
@@ -179,6 +189,11 @@ export const useAuthStore = create<AuthState>()(
         } finally {
           set({ isHydrating: false });
         }
+        })().finally(() => {
+          hydrationPromise = null;
+        });
+
+        return hydrationPromise;
       },
 
       setUser: (user) => set({ user }),

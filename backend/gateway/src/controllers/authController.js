@@ -12,7 +12,8 @@ export function createAuthController({ authClient }) {
                     context: createRequestContext(req),
                     email: req.body.email || '',
                     password: req.body.password || '',
-                    displayName: req.body.displayName || ''
+                    displayName: req.body.displayName || '',
+                    voicePreference: req.body.voicePreference || 'female'
                 }));
             }
             catch (error) {
@@ -71,7 +72,8 @@ export function createAuthController({ authClient }) {
                 res.json(await call('UpdateProfile', {
                     context: createRequestContext(req),
                     accessToken: accessTokenFrom(req),
-                    displayName: req.body.displayName || ''
+                    displayName: req.body.displayName || '',
+                    voicePreference: req.body.voicePreference || ''
                 }));
             }
             catch (error) {

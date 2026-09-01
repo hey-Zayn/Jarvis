@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { apiClient } from '@/lib/api';
+import { useAuthStore } from '@/store/authStore';
 
 interface MessageTurn {
   id: string;
@@ -97,6 +98,7 @@ function executeBrowserAction(transcript: string): { message: string; url?: stri
 }
 
 export function VoiceWorkspace() {
+  const voicePreference = useAuthStore((state) => state.user?.voicePreference || 'female');
   const [searchParams] = useSearchParams();
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -164,17 +166,19 @@ export function VoiceWorkspace() {
     if (!cleanText) return;
 
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.rate = 1.05;
-    utterance.pitch = 1.0;
+    utterance.rate = voicePreference === 'male' ? 0.98 : 1.05;
+    utterance.pitch = voicePreference === 'male' ? 0.78 : 1.05;
 
     // Pick a natural English voice if available
     const voices = window.speechSynthesis.getVoices();
-    const naturalVoice = voices.find(
-      (v) => v.lang.startsWith('en') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha'))
-    ) || voices.find((v) => v.lang.startsWith('en'));
+    const maleNames = /david|daniel|alex|mark|guy|male|man|james/i;
+    const femaleNames = /samantha|karen|zira|susan|female|woman|aria|jenny/i;
+    const preferredVoice = voices.find((v) => v.lang.startsWith('en') && (voicePreference === 'male' ? maleNames.test(v.name) : femaleNames.test(v.name)))
+      || voices.find((v) => v.lang.startsWith('en') && /natural|google|microsoft/i.test(v.name))
+      || voices.find((v) => v.lang.startsWith('en'));
 
-    if (naturalVoice) {
-      utterance.voice = naturalVoice;
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
     }
 
     utterance.onstart = () => setIsSpeaking(true);
@@ -182,7 +186,7 @@ export function VoiceWorkspace() {
     utterance.onerror = () => setIsSpeaking(false);
 
     window.speechSynthesis.speak(utterance);
-  }, [ttsEnabled, stopSpeaking]);
+  }, [ttsEnabled, stopSpeaking, voicePreference]);
 
   // Initialize and tear down Speech Recognition
   useEffect(() => {

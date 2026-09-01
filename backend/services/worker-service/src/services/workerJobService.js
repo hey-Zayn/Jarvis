@@ -1,5 +1,6 @@
 const okStatus = (message) => ({ ok: true, message });
 import { prisma } from '../lib/prisma.js';
+import { invalidateConversationCache } from '../cache/redisCache.js';
 
 // Redis connection configuration
 let redisConnection = {
@@ -51,6 +52,7 @@ let queues = {
                 prisma.message.create({ data: { conversationId, role: 'assistant', content: agentResponse || '' } }),
                 prisma.conversation.update({ where: { id: conversationId }, data: { updatedAt: new Date() } })
             ]);
+            await invalidateConversationCache(userId, conversationId);
             return { status: 'persisted', conversationId, turnId };
         }, { connection: redisConnection });
 

@@ -2,7 +2,7 @@ import { useState, type ChangeEvent } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AutoAwesome, CheckCircle, Visibility, VisibilityOff } from '@mui/icons-material';
+import { AutoAwesome, CheckCircle, Female, Male, Visibility, VisibilityOff } from '@mui/icons-material';
 import {
   Box,
   Button,
@@ -39,9 +39,11 @@ export function Register() {
 
   const strength = getPasswordStrength(password);
   const strengthLabels = ['Very weak', 'Weak', 'Fair', 'Strong', 'Very strong'];
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm<RegisterInput>({
+  const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
+    defaultValues: { voicePreference: 'female' },
   });
+  const selectedVoice = watch('voicePreference');
 
   const onSubmit = async (data: RegisterInput) => {
     try {
@@ -87,6 +89,34 @@ export function Register() {
               <Stack spacing={2.25}>
                 <TextField {...register('displayName')} id="displayName" label="Display name" type="text" autoComplete="name" fullWidth autoFocus disabled={isLoading} error={Boolean(errors.displayName)} helperText={errors.displayName?.message} slotProps={{ htmlInput: { maxLength: 100 } }} />
                 <TextField {...register('email')} id="email" label="Email address" type="email" autoComplete="email" fullWidth disabled={isLoading} error={Boolean(errors.email)} helperText={errors.email?.message} />
+
+                <Box>
+                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700 }}>Choose your Jarvis voice</Typography>
+                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
+                    {([
+                      { value: 'female' as const, title: 'Woman', description: 'Clear and natural', Icon: Female },
+                      { value: 'male' as const, title: 'Man', description: 'Firm and low-toned', Icon: Male },
+                    ]).map(({ value, title, description, Icon }) => (
+                      <Paper
+                        key={value}
+                        component="button"
+                        type="button"
+                        onClick={() => setValue('voicePreference', value, { shouldDirty: true, shouldValidate: true })}
+                        elevation={0}
+                        sx={{ flex: 1, textAlign: 'left', p: 1.5, cursor: 'pointer', color: 'inherit', borderRadius: 2, border: '1px solid', borderColor: selectedVoice === value ? 'primary.main' : 'divider', bgcolor: selectedVoice === value ? 'rgba(25,118,210,0.12)' : 'transparent', transition: 'border-color 160ms ease-out, background-color 160ms ease-out, transform 160ms ease-out', '&:hover': { borderColor: 'primary.light' }, '&:active': { transform: 'scale(0.98)' } }}
+                        aria-pressed={selectedVoice === value}
+                      >
+                        <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center' }}>
+                          <Icon color={selectedVoice === value ? 'primary' : 'action'} />
+                          <Box>
+                            <Typography variant="body2" sx={{ fontWeight: 700 }}>{title}</Typography>
+                            <Typography variant="caption" color="text.secondary">{description}</Typography>
+                          </Box>
+                        </Stack>
+                      </Paper>
+                    ))}
+                  </Stack>
+                </Box>
 
                 <Box>
                   <TextField {...register('password')} id="password" label="Password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" fullWidth disabled={isLoading} error={Boolean(errors.password)} helperText={errors.password?.message} onChange={handlePasswordChange} slotProps={{ input: { endAdornment: passwordAdornment(showPassword, () => setShowPassword((visible) => !visible), showPassword ? 'Hide password' : 'Show password') } }} />

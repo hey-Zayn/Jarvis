@@ -25,7 +25,7 @@ export class MemoryStore {
       throw new Error('Memory content is required');
     }
 
-    const memoryId = `mem-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+    const memoryId = crypto.randomUUID();
     const vector = await this.embeddingProvider.generateEmbedding(content);
 
     const payload = {
@@ -89,9 +89,9 @@ export class MemoryStore {
   /**
    * Delete memory
    */
-  async delete({ memoryId }) {
+  async delete({ memoryId, userId }) {
     if (!memoryId) return false;
-    const memory = await prisma.memory.findUnique({ where: { id: memoryId }, select: { vectorId: true } });
+    const memory = await prisma.memory.findFirst({ where: { id: memoryId, ...(userId ? { userId } : {}) }, select: { vectorId: true } });
     if (memory) await prisma.memory.delete({ where: { id: memoryId } });
     return await this.qdrantClient.deletePoint(memory?.vectorId || memoryId);
   }

@@ -67,5 +67,14 @@ export function createAgentController() {
                 callback(err);
             }
         }
+        ,
+        async ListMemories(call, callback) {
+            try { callback(null, await agentService.listMemories(call.request)); }
+            catch (err) { callback(err); }
+        },
+        async DeleteMemory(call, callback) {
+            try { callback(null, await agentService.deleteMemory(call.request)); }
+            catch (err) { callback(err); }
+        }
     };
 }

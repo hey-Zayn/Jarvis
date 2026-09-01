@@ -1,229 +1,82 @@
-import { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Brain, Plus, Search, Trash2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { FormEvent, useEffect, useState } from 'react';
+import { Add, Delete, Psychology, Refresh, Search, Save } from '@mui/icons-material';
+import { Alert, Box, Button, Card, CardContent, CardHeader, Chip, CircularProgress, FormControl, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
+import { apiClient } from '@/lib/api';
 
-interface MemoryItem {
-  id: string;
-  content: string;
-  category: 'user_preference' | 'fact' | 'task' | 'general';
-  score?: number;
-  createdAt: string;
-}
+type MemoryCategory = 'user_preference' | 'fact' | 'task' | 'general';
+interface MemoryItem { memoryId: string; content: string; category: MemoryCategory; score?: number; createdAtEpochMillis?: string; }
 
-const mockMemories: MemoryItem[] = [
-  {
-    id: 'mem-1',
-    content: 'User prefers concise, direct responses under 200ms latency without filler words.',
-    category: 'user_preference',
-    createdAt: 'Today, 2:30 PM'
-  },
-  {
-    id: 'mem-2',
-    content: 'User lives in Seattle, WA and works on distributed systems and AI agents.',
-    category: 'fact',
-    createdAt: 'Yesterday'
-  },
-  {
-    id: 'mem-3',
-    content: 'Preferred tech stack: Node.js, React, TypeScript, Rust, and Tailwind CSS.',
-    category: 'user_preference',
-    createdAt: 'Aug 24, 2026'
-  },
-  {
-    id: 'mem-4',
-    content: 'Deploy Redis cluster with BullMQ worker queues on port 6379.',
-    category: 'task',
-    createdAt: 'Aug 20, 2026'
-  }
+const categories: Array<{ value: 'all' | MemoryCategory; label: string }> = [
+  { value: 'all', label: 'All memories' }, { value: 'user_preference', label: 'Preferences' },
+  { value: 'fact', label: 'Facts' }, { value: 'task', label: 'Tasks' }, { value: 'general', label: 'General' },
 ];
 
 export function MemoryPage() {
-  const [memories, setMemories] = useState<MemoryItem[]>(mockMemories);
+  const [memories, setMemories] = useState<MemoryItem[]>([]);
+  const [category, setCategory] = useState<'all' | MemoryCategory>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [newContent, setNewContent] = useState('');
-  const [newCategory, setNewCategory] = useState<'user_preference' | 'fact' | 'task' | 'general'>('user_preference');
+  const [newCategory, setNewCategory] = useState<MemoryCategory>('user_preference');
   const [isAdding, setIsAdding] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [error, setError] = useState('');
 
-  const categories = [
-    { id: 'all', label: 'All Memories' },
-    { id: 'user_preference', label: 'Preferences' },
-    { id: 'fact', label: 'Facts' },
-    { id: 'task', label: 'Tasks' },
-    { id: 'general', label: 'General' },
-  ];
+  const loadMemories = async (selectedCategory = category) => {
+    setIsLoading(true); setError('');
+    try {
+      const response = await apiClient.listMemories(selectedCategory);
+      if (!response.status?.ok) throw new Error(response.status?.message || 'Could not load memories');
+      setMemories(response.memories || []);
+    } catch (err) { setError(err instanceof Error ? err.message : 'Could not load memories'); }
+    finally { setIsLoading(false); }
+  };
 
-  const filtered = memories.filter(m => {
-    const matchesCat = selectedCategory === 'all' || m.category === selectedCategory;
-    const matchesSearch = m.content.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCat && matchesSearch;
-  });
+  useEffect(() => { void loadMemories(); }, [category]);
 
-  const handleAddMemory = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSearch = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!searchQuery.trim()) return loadMemories();
+    setIsLoading(true); setError('');
+    try {
+      const response = await apiClient.searchMemory(searchQuery.trim(), 50);
+      if (!response.status?.ok) throw new Error(response.status?.message || 'Search failed');
+      setMemories((response.results || []).filter((item: MemoryItem) => category === 'all' || item.category === category));
+    } catch (err) { setError(err instanceof Error ? err.message : 'Search failed'); }
+    finally { setIsLoading(false); }
+  };
+
+  const handleAdd = async (event: FormEvent) => {
+    event.preventDefault();
     if (!newContent.trim()) return;
-
-    const newMem: MemoryItem = {
-      id: `mem-${Date.now()}`,
-      content: newContent.trim(),
-      category: newCategory,
-      createdAt: 'Just now'
-    };
-
-    setMemories([newMem, ...memories]);
-    setNewContent('');
-    setIsAdding(false);
+    setIsSaving(true); setError('');
+    try {
+      const response = await apiClient.saveMemory({ content: newContent.trim(), metadata: { category: newCategory } });
+      if (!response.status?.ok) throw new Error(response.status?.message || 'Could not save memory');
+      setNewContent(''); setIsAdding(false); await loadMemories();
+    } catch (err) { setError(err instanceof Error ? err.message : 'Could not save memory'); }
+    finally { setIsSaving(false); }
   };
 
-  const handleDelete = (id: string) => {
-    setMemories(prev => prev.filter(m => m.id !== id));
+  const handleDelete = async (memoryId: string) => {
+    setBusyId(memoryId); setError('');
+    try {
+      const response = await apiClient.deleteMemory(memoryId);
+      if (!response.status?.ok) throw new Error(response.status?.message || 'Could not delete memory');
+      setMemories((current) => current.filter((memory) => memory.memoryId !== memoryId));
+    } catch (err) { setError(err instanceof Error ? err.message : 'Could not delete memory'); }
+    finally { setBusyId(null); }
   };
 
-  const getCategoryBadgeClass = (cat: string) => {
-    switch (cat) {
-      case 'user_preference': return 'bg-violet-500/20 text-violet-300 border-violet-500/30';
-      case 'fact': return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
-      case 'task': return 'bg-amber-500/20 text-amber-300 border-amber-500/30';
-      default: return 'bg-zinc-800 text-zinc-400 border-zinc-700';
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <Brain className="h-6 w-6 text-violet-400" />
-                <h1 className="text-2xl font-bold text-zinc-100">Vector Memory Manager</h1>
-              </div>
-              <p className="text-sm text-zinc-400">Context and facts retrieved semantically by Jarvis during reasoning</p>
-            </div>
-            <Button
-              onClick={() => setIsAdding(!isAdding)}
-              className="gap-2 bg-violet-600 hover:bg-violet-500"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Add Memory</span>
-            </Button>
-          </div>
-
-          <AnimatePresence>
-            {isAdding && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden"
-              >
-                <Card className="bg-zinc-900/90 border-violet-500/30 p-4 space-y-4">
-                  <form onSubmit={handleAddMemory} className="space-y-4">
-                    <div className="space-y-2">
-                      <label className="text-xs font-medium text-zinc-300">Memory Content</label>
-                      <textarea
-                        value={newContent}
-                        onChange={(e) => setNewContent(e.target.value)}
-                        placeholder="e.g. User prefers Python for data tasks and Rust for web servers..."
-                        className="w-full h-20 p-3 rounded-lg bg-zinc-950 border border-zinc-800 text-sm text-zinc-100 focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"
-                      />
-                    </div>
-                    <div className="flex flex-wrap items-center justify-between gap-4">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-zinc-400">Category:</span>
-                        <select
-                          value={newCategory}
-                          onChange={(e) => setNewCategory(e.target.value as any)}
-                          className="bg-zinc-950 border border-zinc-800 text-xs text-zinc-200 rounded-md px-2 py-1.5 focus:outline-none"
-                        >
-                          <option value="user_preference">Preference</option>
-                          <option value="fact">Fact</option>
-                          <option value="task">Task</option>
-                          <option value="general">General</option>
-                        </select>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button type="button" variant="ghost" size="sm" onClick={() => setIsAdding(false)}>
-                          Cancel
-                        </Button>
-                        <Button type="submit" size="sm" className="bg-violet-600 hover:bg-violet-500">
-                          Save to Qdrant
-                        </Button>
-                      </div>
-                    </div>
-                  </form>
-                </Card>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-            <div className="flex flex-wrap gap-1.5">
-              {categories.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    selectedCategory === cat.id
-                      ? 'bg-violet-600 text-white shadow-[0_0_15px_rgba(25,118,210,0.3)]'
-                      : 'bg-zinc-900 text-zinc-400 hover:text-zinc-200 border border-zinc-800'
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
-
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-zinc-500" />
-              <input
-                type="text"
-                placeholder="Semantic query..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-9 pl-8 pr-3 rounded-lg bg-zinc-900 border border-zinc-800 text-xs text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-violet-500"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {filtered.length === 0 ? (
-              <div className="col-span-full text-center py-12">
-                <Brain className="h-8 w-8 text-zinc-600 mx-auto mb-2" />
-                <p className="text-zinc-400 text-sm">No memories match the filter</p>
-              </div>
-            ) : (
-              filtered.map((item, idx) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: idx * 0.04 }}
-                >
-                  <Card className="bg-zinc-900/40 border-zinc-800 hover:border-zinc-700 p-4 space-y-3 h-full flex flex-col justify-between">
-                    <p className="text-sm text-zinc-200 leading-relaxed">{item.content}</p>
-                    <div className="flex items-center justify-between pt-2 border-t border-zinc-800/60 text-xs">
-                      <span className={`px-2 py-0.5 rounded-full border text-[11px] capitalize ${getCategoryBadgeClass(item.category)}`}>
-                        {item.category.replace('_', ' ')}
-                      </span>
-                      <div className="flex items-center gap-3 text-zinc-500">
-                        <span>{item.createdAt}</span>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(item.id)}
-                          className="h-6 w-6 text-zinc-500 hover:text-red-400 hover:bg-red-500/10"
-                          aria-label="Delete memory"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
-                </motion.div>
-              ))
-            )}
-          </div>
-    </div>
-  );
+  return <Stack spacing={3}>
+    <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ justifyContent: 'space-between', alignItems: { sm: 'center' } }} spacing={2}>
+      <Box><Typography variant="h4" sx={{ fontWeight: 800, letterSpacing: '-0.035em' }}>Vector memory</Typography><Typography color="text.secondary" sx={{ mt: 0.75 }}>Facts and preferences Jarvis can retrieve when they are relevant.</Typography></Box>
+      <Stack direction="row" spacing={1}><Button variant="outlined" startIcon={<Refresh />} onClick={() => loadMemories()} disabled={isLoading}>Refresh</Button><Button variant="contained" startIcon={<Add />} onClick={() => setIsAdding((open) => !open)}>{isAdding ? 'Close' : 'Add memory'}</Button></Stack>
+    </Stack>
+    {error && <Alert severity="error">{error}</Alert>}
+    {isAdding && <Card><CardHeader title="Save a memory" subheader="Add a specific fact, preference, or task Jarvis should remember." /><CardContent><Box component="form" onSubmit={handleAdd}><Stack spacing={2}><TextField label="Memory content" value={newContent} onChange={(event) => setNewContent(event.target.value)} placeholder="Example: I prefer concise technical answers." multiline minRows={3} fullWidth required autoFocus /><Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ alignItems: { sm: 'center' } }}><FormControl size="small" sx={{ minWidth: { sm: 210 } }}><InputLabel id="memory-category-label">Category</InputLabel><Select labelId="memory-category-label" value={newCategory} label="Category" onChange={(event) => setNewCategory(event.target.value as MemoryCategory)}>{categories.filter((item) => item.value !== 'all').map((item) => <MenuItem key={item.value} value={item.value}>{item.label}</MenuItem>)}</Select></FormControl><Button type="submit" variant="contained" startIcon={<Save />} disabled={isSaving || !newContent.trim()}>{isSaving ? 'Saving…' : 'Save memory'}</Button></Stack></Stack></Box></CardContent></Card>}
+    <Card><CardContent><Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ justifyContent: 'space-between' }}><Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 1 }}>{categories.map((item) => <Button key={item.value} size="small" variant={category === item.value ? 'contained' : 'outlined'} onClick={() => setCategory(item.value)}>{item.label}</Button>)}</Stack><Box component="form" onSubmit={handleSearch} sx={{ display: 'flex', gap: 1, width: { xs: '100%', md: 330 } }}><TextField size="small" fullWidth value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search by meaning…" slotProps={{ htmlInput: { 'aria-label': 'Search memories by meaning' } }} /><Button type="submit" variant="outlined" aria-label="Search memories" disabled={isLoading}><Search /></Button></Box></Stack></CardContent></Card>
+    {isLoading ? <Stack sx={{ alignItems: 'center', py: 8 }}><CircularProgress size={30} /><Typography color="text.secondary" sx={{ mt: 2 }}>Loading memory vault…</Typography></Stack> : memories.length === 0 ? <Card><CardContent><Stack sx={{ alignItems: 'center', py: 6 }} spacing={1}><Psychology color="disabled" sx={{ fontSize: 42 }} /><Typography variant="h6">No memories found</Typography><Typography color="text.secondary">Add a memory or try a different semantic search.</Typography></Stack></CardContent></Card> : <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, minmax(0, 1fr))' }, gap: 2 }}>{memories.map((memory) => <Card key={memory.memoryId} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}><CardContent sx={{ flex: 1 }}><Stack spacing={2} sx={{ height: '100%', justifyContent: 'space-between' }}><Typography sx={{ lineHeight: 1.7 }}>{memory.content}</Typography><Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center' }}><Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}><Chip size="small" color={memory.category === 'user_preference' ? 'primary' : memory.category === 'fact' ? 'success' : memory.category === 'task' ? 'warning' : 'default'} label={memory.category.replace('_', ' ')} />{memory.score !== undefined && <Typography variant="caption" color="text.secondary">{Math.round(memory.score * 100)}% match</Typography>}</Stack><Button size="small" color="error" startIcon={busyId === memory.memoryId ? <CircularProgress size={14} color="inherit" /> : <Delete />} onClick={() => handleDelete(memory.memoryId)} disabled={busyId === memory.memoryId}>Delete</Button></Stack></Stack></CardContent></Card>)}</Box>}
+  </Stack>;
 }

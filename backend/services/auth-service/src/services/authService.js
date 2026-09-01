@@ -11,11 +11,12 @@ function validateCredentials(email, password) {
     if (typeof password !== 'string' || password.length < 8) return 'Password must be at least 8 characters';
     return null;
 }
+function normalizeVoicePreference(value) { return value === 'male' ? 'male' : 'female'; }
 function profileResponse(user) {
-    return { userId: user.id, email: user.email, displayName: user.displayName || '', createdAtEpochMillis: String(user.createdAt.getTime()), updatedAtEpochMillis: String(user.updatedAt.getTime()) };
+    return { userId: user.id, email: user.email, displayName: user.displayName || '', voicePreference: normalizeVoicePreference(user.voicePreference), createdAtEpochMillis: String(user.createdAt.getTime()), updatedAtEpochMillis: String(user.updatedAt.getTime()) };
 }
 function sessionResponse(user, tokens) {
-    return { userId: user.id, email: user.email, displayName: user.displayName || '', accessToken: tokens.accessToken, refreshToken: tokens.refreshToken, expiresInSeconds: ACCESS_TOKEN_SECONDS };
+    return { userId: user.id, email: user.email, displayName: user.displayName || '', voicePreference: normalizeVoicePreference(user.voicePreference), accessToken: tokens.accessToken, refreshToken: tokens.refreshToken, expiresInSeconds: ACCESS_TOKEN_SECONDS };
 }
 
 export function createAuthService({ prisma = defaultPrisma } = {}) {
@@ -33,12 +34,12 @@ export function createAuthService({ prisma = defaultPrisma } = {}) {
     }
 
     return {
-        async register({ email, password, displayName }) {
+        async register({ email, password, displayName, voicePreference }) {
             const normalizedEmail = normalizeEmail(email);
             const validationError = validateCredentials(normalizedEmail, password);
             if (validationError) return { status: errorStatus(validationError, 'VALIDATION_ERROR') };
             if (await prisma.user.findUnique({ where: { email: normalizedEmail } })) return { status: errorStatus('An account with this email already exists', 'EMAIL_TAKEN') };
-            const user = await prisma.user.create({ data: { email: normalizedEmail, displayName: String(displayName || '').trim() || null, passwordHash: await hashPassword(password) } });
+            const user = await prisma.user.create({ data: { email: normalizedEmail, displayName: String(displayName || '').trim() || null, voicePreference: normalizeVoicePreference(voicePreference), passwordHash: await hashPassword(password) } });
             return { status: okStatus('Registration successful'), session: sessionResponse(user, await issueSession(user)) };
         },
         async login({ email, password }) {
@@ -71,12 +72,12 @@ export function createAuthService({ prisma = defaultPrisma } = {}) {
                 return { status: okStatus('Profile retrieved'), profile: profileResponse(user) };
             } catch { return { status: errorStatus('Authentication is required', 'UNAUTHENTICATED') }; }
         },
-        async updateProfile({ accessToken, userId, displayName }) {
+        async updateProfile({ accessToken, userId, displayName, voicePreference }) {
             if (typeof displayName !== 'string' || !displayName.trim() || displayName.trim().length > 100) return { status: errorStatus('displayName must be between 1 and 100 characters', 'VALIDATION_ERROR') };
             try {
                 const user = userId ? await prisma.user.findUnique({ where: { id: userId } }) : (await authenticatedUser(accessToken)).user;
                 if (!user) return { status: errorStatus('Profile not found', 'NOT_FOUND') };
-                const updatedUser = await prisma.user.update({ where: { id: user.id }, data: { displayName: displayName.trim() } });
+                const updatedUser = await prisma.user.update({ where: { id: user.id }, data: { displayName: displayName.trim(), voicePreference: normalizeVoicePreference(voicePreference || user.voicePreference) } });
                 return { status: okStatus('Profile updated'), profile: profileResponse(updatedUser) };
             } catch { return { status: errorStatus('Authentication is required', 'UNAUTHENTICATED') }; }
         }

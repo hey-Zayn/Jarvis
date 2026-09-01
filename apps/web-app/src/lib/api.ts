@@ -14,6 +14,10 @@ class ApiClient {
   private readonly MAX_QUEUE_SIZE = 50;
   private readonly REFRESH_TIMEOUT_MS = 10000;
 
+  private isAuthEndpoint(url?: string) {
+    return Boolean(url && /^\/auth\/(login|register|refresh-token|verify-token)/.test(url));
+  }
+
   constructor() {
     this.client = axios.create({
       baseURL: API_BASE_URL,
@@ -43,7 +47,7 @@ class ApiClient {
       async (error: AxiosError) => {
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (error.response?.status === 401 && !originalRequest._retry && !this.isAuthEndpoint(originalRequest.url)) {
           if (this.isRefreshing) {
             if (this.failedQueue.length >= this.MAX_QUEUE_SIZE) {
               return Promise.reject(new Error('Token refresh queue full'));
@@ -92,7 +96,7 @@ class ApiClient {
   }
 
   // Auth endpoints
-  async register(data: { email: string; password: string; displayName: string }) {
+  async register(data: { email: string; password: string; displayName: string; voicePreference: 'female' | 'male' }) {
     const response = await this.client.post('/auth/register', data);
     return response.data;
   }
@@ -129,7 +133,7 @@ class ApiClient {
     return response.data;
   }
 
-  async updateProfile(accessToken: string, data: { displayName: string }) {
+  async updateProfile(accessToken: string, data: { displayName: string; voicePreference?: 'female' | 'male' }) {
     const response = await this.client.patch('/auth/profile', data, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
@@ -211,6 +215,16 @@ class ApiClient {
     const response = await this.client.get('/agent/memory/search', {
       params: { query, limit },
     });
+    return response.data;
+  }
+
+  async listMemories(category = 'all', limit = 100) {
+    const response = await this.client.get('/agent/memory', { params: { category, limit } });
+    return response.data;
+  }
+
+  async deleteMemory(memoryId: string) {
+    const response = await this.client.delete(`/agent/memory/${memoryId}`);
     return response.data;
   }
 
