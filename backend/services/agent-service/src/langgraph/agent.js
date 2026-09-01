@@ -33,8 +33,8 @@ export class LangGraphAgent {
   /**
    * Main entry point to process a voice/text command with multi-step reasoning and streaming output.
    */
-  async *processCommand({ conversationId, userId, transcript, browserContext, memoryStore }) {
-    const state = new AgentState({ conversationId, userId, transcript, browserContext });
+  async *processCommand({ conversationId, userId, transcript, browserContext, memoryStore, history = [] }) {
+    const state = new AgentState({ conversationId, userId, transcript, browserContext, history });
     const startTime = Date.now();
     let chunkIndex = 0;
 

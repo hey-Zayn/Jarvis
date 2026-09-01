@@ -3,6 +3,7 @@ import { createRequestContext } from '../utils/requestContext.js';
 import { createLatencyLogger } from '../utils/logger.js';
 import { LangGraphAgent } from '../langgraph/agent.js';
 import { MemoryStore } from '../memory/memoryStore.js';
+import { prisma } from '../lib/prisma.js';
 
 const okStatus = (message) => ({ ok: true, message });
 
@@ -43,11 +44,38 @@ export function createAgentService() {
     });
 
     return {
-        startConversation({ title }) {
+        async startConversation({ title, context }) {
+            const userId = context?.userId;
+            if (!userId) throw new Error('Authenticated user is required');
+            const conversation = await prisma.conversation.create({
+                data: { userId, title: title?.trim() || 'New conversation' }
+            });
             return {
-                status: okStatus('StartConversation contract is wired'),
-                conversationId: `conv-${Date.now()}`
+                status: okStatus('Conversation created'),
+                conversationId: conversation.id
             };
+        },
+
+        async listConversations({ limit = 50, context }) {
+            const userId = context?.userId;
+            if (!userId) throw new Error('Authenticated user is required');
+            const conversations = await prisma.conversation.findMany({
+                where: { userId }, orderBy: { updatedAt: 'desc' }, take: Math.min(Number(limit) || 50, 100),
+                include: { _count: { select: { messages: true } }, messages: { orderBy: { createdAt: 'desc' }, take: 1 } }
+            });
+            return { status: okStatus('Conversations retrieved'), conversations: conversations.map((conversation) => ({
+                conversationId: conversation.id, title: conversation.title || 'New conversation',
+                createdAtEpochMillis: String(conversation.createdAt.getTime()), updatedAtEpochMillis: String(conversation.updatedAt.getTime()),
+                messageCount: conversation._count.messages, lastMessage: conversation.messages[0]?.content || ''
+            })) };
+        },
+
+        async getConversationMessages({ conversationId, context }) {
+            const userId = context?.userId;
+            if (!userId) throw new Error('Authenticated user is required');
+            const conversation = await prisma.conversation.findFirst({ where: { id: conversationId, userId }, include: { messages: { orderBy: { createdAt: 'asc' } } } });
+            if (!conversation) throw new Error('Conversation not found');
+            return { status: okStatus('Conversation messages retrieved'), messages: conversation.messages.map((message) => ({ messageId: message.id, role: message.role, content: message.content, createdAtEpochMillis: String(message.createdAt.getTime()) })) };
         },
 
         async *sendVoiceCommand({ conversationId, transcript, browserContext, context }) {
@@ -57,7 +85,14 @@ export function createAgentService() {
             let fullResponseText = '';
 
             const reqId = context?.requestId || `req-${Date.now()}`;
-            const userId = context?.userId || 'anonymous-user';
+            const userId = context?.userId;
+            if (!userId) throw new Error('Authenticated user is required');
+            const history = conversationId ? await prisma.message.findMany({
+                where: { conversationId, conversation: { userId } },
+                orderBy: { createdAt: 'asc' },
+                take: 30,
+                select: { role: true, content: true }
+            }) : [];
 
             latencyLogger.log('voice_command_request_received', {
                 requestId: reqId,
@@ -71,7 +106,8 @@ export function createAgentService() {
                     userId,
                     transcript,
                     browserContext,
-                    memoryStore
+                    memoryStore,
+                    history
                 });
 
                 for await (const chunk of stream) {

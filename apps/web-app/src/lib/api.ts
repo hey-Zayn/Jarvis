@@ -142,6 +142,16 @@ class ApiClient {
     return response.data;
   }
 
+  async listConversations(limit = 50) {
+    const response = await this.client.get('/agent/conversations', { params: { limit } });
+    return response.data;
+  }
+
+  async getConversationMessages(conversationId: string) {
+    const response = await this.client.get(`/agent/conversations/${conversationId}/messages`);
+    return response.data;
+  }
+
   async sendVoiceCommand(data: {
     conversationId: string;
     transcript: string;

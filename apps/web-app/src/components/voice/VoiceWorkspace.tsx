@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Mic, MicOff, Send, Loader2, Zap, RotateCcw, Volume2, VolumeX, Square, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { apiClient } from '@/lib/api';
 
 interface MessageTurn {
@@ -96,6 +97,7 @@ function executeBrowserAction(transcript: string): { message: string; url?: stri
 }
 
 export function VoiceWorkspace() {
+  const [searchParams] = useSearchParams();
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [ttsEnabled, setTtsEnabled] = useState(true);
@@ -113,6 +115,20 @@ export function VoiceWorkspace() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const conversationIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    const requestedConversationId = searchParams.get('conversationId');
+    if (!requestedConversationId) return;
+    conversationIdRef.current = requestedConversationId;
+    apiClient.getConversationMessages(requestedConversationId).then((response) => {
+      if (response.status?.ok && Array.isArray(response.messages)) {
+        setMessages(response.messages.map((message: { messageId: string; role: 'user' | 'assistant'; content: string }) => ({
+          id: message.messageId, role: message.role, content: message.content
+        })));
+      }
+    }).catch((error) => console.error('[VoiceWorkspace] Failed to load conversation:', error));
+  }, [searchParams]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -306,7 +322,13 @@ export function VoiceWorkspace() {
     abortControllerRef.current = abortController;
 
     try {
-      const conversationId = `conv-${Date.now()}`;
+      if (!conversationIdRef.current) {
+        const conversation = await apiClient.startConversation({ title: textToSend.slice(0, 80) });
+        if (!conversation.status?.ok || !conversation.conversationId) throw new Error(conversation.status?.message || 'Could not create conversation');
+        conversationIdRef.current = conversation.conversationId;
+      }
+      const conversationId = conversationIdRef.current;
+      if (!conversationId) throw new Error('Conversation is not available');
       const stream = await apiClient.sendVoiceCommandStream({
         conversationId,
         transcript: textToSend,

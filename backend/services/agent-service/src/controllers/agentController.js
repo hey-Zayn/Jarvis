@@ -4,14 +4,24 @@ export function createAgentController() {
     const agentService = createAgentService();
 
     return {
-        StartConversation(call, callback) {
+        async StartConversation(call, callback) {
             try {
-                const res = agentService.startConversation(call.request);
+                const res = await agentService.startConversation(call.request);
                 callback(null, res);
             } catch (err) {
                 console.error('[AgentController] StartConversation error:', err);
                 callback(err);
             }
+        },
+
+        async ListConversations(call, callback) {
+            try { callback(null, await agentService.listConversations(call.request)); }
+            catch (err) { callback(err); }
+        },
+
+        async GetConversationMessages(call, callback) {
+            try { callback(null, await agentService.getConversationMessages(call.request)); }
+            catch (err) { callback(err); }
         },
 
         async SendVoiceCommand(call) {

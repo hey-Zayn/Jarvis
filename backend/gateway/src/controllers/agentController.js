@@ -19,6 +19,20 @@ export function createAgentController({ agentClient }) {
             }
         },
 
+        async listConversations(req, res, next) {
+            try {
+                const response = await unary(agentClient, 'ListConversations', { context: createRequestContext(req), limit: Number(req.query.limit || 50) });
+                res.json(response);
+            } catch (error) { next(error); }
+        },
+
+        async getConversationMessages(req, res, next) {
+            try {
+                const response = await unary(agentClient, 'GetConversationMessages', { context: createRequestContext(req), conversationId: req.params.conversationId });
+                res.json(response);
+            } catch (error) { next(error); }
+        },
+
         sendVoiceCommand(req, res, next) {
             // Record when request was received
             const requestReceivedTime = Date.now();

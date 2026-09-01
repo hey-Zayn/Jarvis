@@ -3,7 +3,7 @@
  * Represents the complete state of the agent during reasoning and tool usage in Jarvis.
  */
 export class AgentState {
-  constructor({ conversationId, userId, transcript, browserContext } = {}) {
+  constructor({ conversationId, userId, transcript, browserContext, history = [] } = {}) {
     this.conversationId = conversationId || `conv-${Date.now()}`;
     this.userId = userId || 'anonymous';
     this.transcript = transcript || '';
@@ -29,6 +29,12 @@ export class AgentState {
       toolUsageCount: 0,
       errors: []
     };
+
+    for (const message of history) {
+      if (message.role === 'user' || message.role === 'assistant') {
+        this.addMessage(message.role, message.content);
+      }
+    }
 
     if (this.transcript) {
       this.addMessage('user', this.transcript);
