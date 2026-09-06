@@ -79,6 +79,20 @@ export function createAuthController({ authClient }) {
             catch (error) {
                 next(error);
             }
+        },
+        async updateLocation(req, res, next) {
+            try {
+                res.json(await call('UpdateLocation', {
+                    context: createRequestContext(req),
+                    accessToken: accessTokenFrom(req),
+                    latitude: req.body.latitude != null ? Number(req.body.latitude) : 0,
+                    longitude: req.body.longitude != null ? Number(req.body.longitude) : 0,
+                    locationLabel: req.body.locationLabel || ''
+                }));
+            }
+            catch (error) {
+                next(error);
+            }
         }
     };
 }

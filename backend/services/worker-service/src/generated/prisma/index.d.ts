@@ -19,6 +19,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
+ * Model BrowserAction
+ * 
+ */
+export type BrowserAction = $Result.DefaultSelection<Prisma.$BrowserActionPayload>
+/**
  * Model Session
  * 
  */
@@ -169,6 +174,16 @@ export class PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.browserAction`: Exposes CRUD operations for the **BrowserAction** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more BrowserActions
+    * const browserActions = await prisma.browserAction.findMany()
+    * ```
+    */
+  get browserAction(): Prisma.BrowserActionDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.session`: Exposes CRUD operations for the **Session** model.
@@ -657,6 +672,7 @@ export namespace Prisma {
 
   export const ModelName: {
     User: 'User',
+    BrowserAction: 'BrowserAction',
     Session: 'Session',
     Conversation: 'Conversation',
     Message: 'Message',
@@ -676,7 +692,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "conversation" | "message" | "memory"
+      modelProps: "user" | "browserAction" | "session" | "conversation" | "message" | "memory"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -751,6 +767,80 @@ export namespace Prisma {
           count: {
             args: Prisma.UserCountArgs<ExtArgs>
             result: $Utils.Optional<UserCountAggregateOutputType> | number
+          }
+        }
+      }
+      BrowserAction: {
+        payload: Prisma.$BrowserActionPayload<ExtArgs>
+        fields: Prisma.BrowserActionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.BrowserActionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BrowserActionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.BrowserActionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BrowserActionPayload>
+          }
+          findFirst: {
+            args: Prisma.BrowserActionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BrowserActionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.BrowserActionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BrowserActionPayload>
+          }
+          findMany: {
+            args: Prisma.BrowserActionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BrowserActionPayload>[]
+          }
+          create: {
+            args: Prisma.BrowserActionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BrowserActionPayload>
+          }
+          createMany: {
+            args: Prisma.BrowserActionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.BrowserActionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BrowserActionPayload>[]
+          }
+          delete: {
+            args: Prisma.BrowserActionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BrowserActionPayload>
+          }
+          update: {
+            args: Prisma.BrowserActionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BrowserActionPayload>
+          }
+          deleteMany: {
+            args: Prisma.BrowserActionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.BrowserActionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.BrowserActionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BrowserActionPayload>[]
+          }
+          upsert: {
+            args: Prisma.BrowserActionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BrowserActionPayload>
+          }
+          aggregate: {
+            args: Prisma.BrowserActionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBrowserAction>
+          }
+          groupBy: {
+            args: Prisma.BrowserActionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<BrowserActionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.BrowserActionCountArgs<ExtArgs>
+            result: $Utils.Optional<BrowserActionCountAggregateOutputType> | number
           }
         }
       }
@@ -1174,6 +1264,7 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     user?: UserOmit
+    browserAction?: BrowserActionOmit
     session?: SessionOmit
     conversation?: ConversationOmit
     message?: MessageOmit
@@ -1261,12 +1352,14 @@ export namespace Prisma {
     sessions: number
     conversations: number
     memories: number
+    browserActions: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     conversations?: boolean | UserCountOutputTypeCountConversationsArgs
     memories?: boolean | UserCountOutputTypeCountMemoriesArgs
+    browserActions?: boolean | UserCountOutputTypeCountBrowserActionsArgs
   }
 
   // Custom InputTypes
@@ -1301,6 +1394,13 @@ export namespace Prisma {
     where?: MemoryWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountBrowserActionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BrowserActionWhereInput
+  }
+
 
   /**
    * Count Type ConversationCountOutputType
@@ -1308,10 +1408,12 @@ export namespace Prisma {
 
   export type ConversationCountOutputType = {
     messages: number
+    browserActions: number
   }
 
   export type ConversationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     messages?: boolean | ConversationCountOutputTypeCountMessagesArgs
+    browserActions?: boolean | ConversationCountOutputTypeCountBrowserActionsArgs
   }
 
   // Custom InputTypes
@@ -1332,6 +1434,13 @@ export namespace Prisma {
     where?: MessageWhereInput
   }
 
+  /**
+   * ConversationCountOutputType without action
+   */
+  export type ConversationCountOutputTypeCountBrowserActionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BrowserActionWhereInput
+  }
+
 
   /**
    * Models
@@ -1343,8 +1452,20 @@ export namespace Prisma {
 
   export type AggregateUser = {
     _count: UserCountAggregateOutputType | null
+    _avg: UserAvgAggregateOutputType | null
+    _sum: UserSumAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
+  }
+
+  export type UserAvgAggregateOutputType = {
+    lastLatitude: number | null
+    lastLongitude: number | null
+  }
+
+  export type UserSumAggregateOutputType = {
+    lastLatitude: number | null
+    lastLongitude: number | null
   }
 
   export type UserMinAggregateOutputType = {
@@ -1353,6 +1474,10 @@ export namespace Prisma {
     displayName: string | null
     voicePreference: string | null
     passwordHash: string | null
+    lastLatitude: number | null
+    lastLongitude: number | null
+    lastLocationLabel: string | null
+    locationUpdatedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1363,6 +1488,10 @@ export namespace Prisma {
     displayName: string | null
     voicePreference: string | null
     passwordHash: string | null
+    lastLatitude: number | null
+    lastLongitude: number | null
+    lastLocationLabel: string | null
+    locationUpdatedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1373,11 +1502,25 @@ export namespace Prisma {
     displayName: number
     voicePreference: number
     passwordHash: number
+    lastLatitude: number
+    lastLongitude: number
+    lastLocationLabel: number
+    locationUpdatedAt: number
     createdAt: number
     updatedAt: number
     _all: number
   }
 
+
+  export type UserAvgAggregateInputType = {
+    lastLatitude?: true
+    lastLongitude?: true
+  }
+
+  export type UserSumAggregateInputType = {
+    lastLatitude?: true
+    lastLongitude?: true
+  }
 
   export type UserMinAggregateInputType = {
     id?: true
@@ -1385,6 +1528,10 @@ export namespace Prisma {
     displayName?: true
     voicePreference?: true
     passwordHash?: true
+    lastLatitude?: true
+    lastLongitude?: true
+    lastLocationLabel?: true
+    locationUpdatedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -1395,6 +1542,10 @@ export namespace Prisma {
     displayName?: true
     voicePreference?: true
     passwordHash?: true
+    lastLatitude?: true
+    lastLongitude?: true
+    lastLocationLabel?: true
+    locationUpdatedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -1405,6 +1556,10 @@ export namespace Prisma {
     displayName?: true
     voicePreference?: true
     passwordHash?: true
+    lastLatitude?: true
+    lastLongitude?: true
+    lastLocationLabel?: true
+    locationUpdatedAt?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -1448,6 +1603,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: UserAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: UserSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: UserMinAggregateInputType
@@ -1478,6 +1645,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: UserCountAggregateInputType | true
+    _avg?: UserAvgAggregateInputType
+    _sum?: UserSumAggregateInputType
     _min?: UserMinAggregateInputType
     _max?: UserMaxAggregateInputType
   }
@@ -1488,9 +1657,15 @@ export namespace Prisma {
     displayName: string | null
     voicePreference: string
     passwordHash: string
+    lastLatitude: number | null
+    lastLongitude: number | null
+    lastLocationLabel: string | null
+    locationUpdatedAt: Date | null
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
+    _avg: UserAvgAggregateOutputType | null
+    _sum: UserSumAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
   }
@@ -1515,11 +1690,16 @@ export namespace Prisma {
     displayName?: boolean
     voicePreference?: boolean
     passwordHash?: boolean
+    lastLatitude?: boolean
+    lastLongitude?: boolean
+    lastLocationLabel?: boolean
+    locationUpdatedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     conversations?: boolean | User$conversationsArgs<ExtArgs>
     memories?: boolean | User$memoriesArgs<ExtArgs>
+    browserActions?: boolean | User$browserActionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1529,6 +1709,10 @@ export namespace Prisma {
     displayName?: boolean
     voicePreference?: boolean
     passwordHash?: boolean
+    lastLatitude?: boolean
+    lastLongitude?: boolean
+    lastLocationLabel?: boolean
+    locationUpdatedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -1539,6 +1723,10 @@ export namespace Prisma {
     displayName?: boolean
     voicePreference?: boolean
     passwordHash?: boolean
+    lastLatitude?: boolean
+    lastLongitude?: boolean
+    lastLocationLabel?: boolean
+    locationUpdatedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -1549,15 +1737,20 @@ export namespace Prisma {
     displayName?: boolean
     voicePreference?: boolean
     passwordHash?: boolean
+    lastLatitude?: boolean
+    lastLongitude?: boolean
+    lastLocationLabel?: boolean
+    locationUpdatedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "displayName" | "voicePreference" | "passwordHash" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "displayName" | "voicePreference" | "passwordHash" | "lastLatitude" | "lastLongitude" | "lastLocationLabel" | "locationUpdatedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     conversations?: boolean | User$conversationsArgs<ExtArgs>
     memories?: boolean | User$memoriesArgs<ExtArgs>
+    browserActions?: boolean | User$browserActionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1569,6 +1762,7 @@ export namespace Prisma {
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       conversations: Prisma.$ConversationPayload<ExtArgs>[]
       memories: Prisma.$MemoryPayload<ExtArgs>[]
+      browserActions: Prisma.$BrowserActionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -1576,6 +1770,10 @@ export namespace Prisma {
       displayName: string | null
       voicePreference: string
       passwordHash: string
+      lastLatitude: number | null
+      lastLongitude: number | null
+      lastLocationLabel: string | null
+      locationUpdatedAt: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -1975,6 +2173,7 @@ export namespace Prisma {
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     conversations<T extends User$conversationsArgs<ExtArgs> = {}>(args?: Subset<T, User$conversationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     memories<T extends User$memoriesArgs<ExtArgs> = {}>(args?: Subset<T, User$memoriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    browserActions<T extends User$browserActionsArgs<ExtArgs> = {}>(args?: Subset<T, User$browserActionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BrowserActionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2009,6 +2208,10 @@ export namespace Prisma {
     readonly displayName: FieldRef<"User", 'String'>
     readonly voicePreference: FieldRef<"User", 'String'>
     readonly passwordHash: FieldRef<"User", 'String'>
+    readonly lastLatitude: FieldRef<"User", 'Float'>
+    readonly lastLongitude: FieldRef<"User", 'Float'>
+    readonly lastLocationLabel: FieldRef<"User", 'String'>
+    readonly locationUpdatedAt: FieldRef<"User", 'DateTime'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -2476,6 +2679,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.browserActions
+   */
+  export type User$browserActionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BrowserAction
+     */
+    select?: BrowserActionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BrowserAction
+     */
+    omit?: BrowserActionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BrowserActionInclude<ExtArgs> | null
+    where?: BrowserActionWhereInput
+    orderBy?: BrowserActionOrderByWithRelationInput | BrowserActionOrderByWithRelationInput[]
+    cursor?: BrowserActionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BrowserActionScalarFieldEnum | BrowserActionScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2491,6 +2718,1243 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model BrowserAction
+   */
+
+  export type AggregateBrowserAction = {
+    _count: BrowserActionCountAggregateOutputType | null
+    _avg: BrowserActionAvgAggregateOutputType | null
+    _sum: BrowserActionSumAggregateOutputType | null
+    _min: BrowserActionMinAggregateOutputType | null
+    _max: BrowserActionMaxAggregateOutputType | null
+  }
+
+  export type BrowserActionAvgAggregateOutputType = {
+    tabId: number | null
+  }
+
+  export type BrowserActionSumAggregateOutputType = {
+    tabId: number | null
+  }
+
+  export type BrowserActionMinAggregateOutputType = {
+    id: string | null
+    actionId: string | null
+    userId: string | null
+    deviceId: string | null
+    tabId: number | null
+    conversationId: string | null
+    actionType: string | null
+    riskTier: string | null
+    status: string | null
+    failureReason: string | null
+    expiresAt: Date | null
+    createdAt: Date | null
+    completedAt: Date | null
+  }
+
+  export type BrowserActionMaxAggregateOutputType = {
+    id: string | null
+    actionId: string | null
+    userId: string | null
+    deviceId: string | null
+    tabId: number | null
+    conversationId: string | null
+    actionType: string | null
+    riskTier: string | null
+    status: string | null
+    failureReason: string | null
+    expiresAt: Date | null
+    createdAt: Date | null
+    completedAt: Date | null
+  }
+
+  export type BrowserActionCountAggregateOutputType = {
+    id: number
+    actionId: number
+    userId: number
+    deviceId: number
+    tabId: number
+    conversationId: number
+    actionType: number
+    riskTier: number
+    payloadSummary: number
+    status: number
+    failureReason: number
+    expiresAt: number
+    createdAt: number
+    completedAt: number
+    _all: number
+  }
+
+
+  export type BrowserActionAvgAggregateInputType = {
+    tabId?: true
+  }
+
+  export type BrowserActionSumAggregateInputType = {
+    tabId?: true
+  }
+
+  export type BrowserActionMinAggregateInputType = {
+    id?: true
+    actionId?: true
+    userId?: true
+    deviceId?: true
+    tabId?: true
+    conversationId?: true
+    actionType?: true
+    riskTier?: true
+    status?: true
+    failureReason?: true
+    expiresAt?: true
+    createdAt?: true
+    completedAt?: true
+  }
+
+  export type BrowserActionMaxAggregateInputType = {
+    id?: true
+    actionId?: true
+    userId?: true
+    deviceId?: true
+    tabId?: true
+    conversationId?: true
+    actionType?: true
+    riskTier?: true
+    status?: true
+    failureReason?: true
+    expiresAt?: true
+    createdAt?: true
+    completedAt?: true
+  }
+
+  export type BrowserActionCountAggregateInputType = {
+    id?: true
+    actionId?: true
+    userId?: true
+    deviceId?: true
+    tabId?: true
+    conversationId?: true
+    actionType?: true
+    riskTier?: true
+    payloadSummary?: true
+    status?: true
+    failureReason?: true
+    expiresAt?: true
+    createdAt?: true
+    completedAt?: true
+    _all?: true
+  }
+
+  export type BrowserActionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BrowserAction to aggregate.
+     */
+    where?: BrowserActionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BrowserActions to fetch.
+     */
+    orderBy?: BrowserActionOrderByWithRelationInput | BrowserActionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: BrowserActionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BrowserActions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BrowserActions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned BrowserActions
+    **/
+    _count?: true | BrowserActionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: BrowserActionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: BrowserActionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: BrowserActionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: BrowserActionMaxAggregateInputType
+  }
+
+  export type GetBrowserActionAggregateType<T extends BrowserActionAggregateArgs> = {
+        [P in keyof T & keyof AggregateBrowserAction]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBrowserAction[P]>
+      : GetScalarType<T[P], AggregateBrowserAction[P]>
+  }
+
+
+
+
+  export type BrowserActionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BrowserActionWhereInput
+    orderBy?: BrowserActionOrderByWithAggregationInput | BrowserActionOrderByWithAggregationInput[]
+    by: BrowserActionScalarFieldEnum[] | BrowserActionScalarFieldEnum
+    having?: BrowserActionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: BrowserActionCountAggregateInputType | true
+    _avg?: BrowserActionAvgAggregateInputType
+    _sum?: BrowserActionSumAggregateInputType
+    _min?: BrowserActionMinAggregateInputType
+    _max?: BrowserActionMaxAggregateInputType
+  }
+
+  export type BrowserActionGroupByOutputType = {
+    id: string
+    actionId: string
+    userId: string
+    deviceId: string | null
+    tabId: number | null
+    conversationId: string | null
+    actionType: string
+    riskTier: string
+    payloadSummary: JsonValue
+    status: string
+    failureReason: string | null
+    expiresAt: Date
+    createdAt: Date
+    completedAt: Date | null
+    _count: BrowserActionCountAggregateOutputType | null
+    _avg: BrowserActionAvgAggregateOutputType | null
+    _sum: BrowserActionSumAggregateOutputType | null
+    _min: BrowserActionMinAggregateOutputType | null
+    _max: BrowserActionMaxAggregateOutputType | null
+  }
+
+  type GetBrowserActionGroupByPayload<T extends BrowserActionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<BrowserActionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof BrowserActionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], BrowserActionGroupByOutputType[P]>
+            : GetScalarType<T[P], BrowserActionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type BrowserActionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    actionId?: boolean
+    userId?: boolean
+    deviceId?: boolean
+    tabId?: boolean
+    conversationId?: boolean
+    actionType?: boolean
+    riskTier?: boolean
+    payloadSummary?: boolean
+    status?: boolean
+    failureReason?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    completedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    conversation?: boolean | BrowserAction$conversationArgs<ExtArgs>
+  }, ExtArgs["result"]["browserAction"]>
+
+  export type BrowserActionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    actionId?: boolean
+    userId?: boolean
+    deviceId?: boolean
+    tabId?: boolean
+    conversationId?: boolean
+    actionType?: boolean
+    riskTier?: boolean
+    payloadSummary?: boolean
+    status?: boolean
+    failureReason?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    completedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    conversation?: boolean | BrowserAction$conversationArgs<ExtArgs>
+  }, ExtArgs["result"]["browserAction"]>
+
+  export type BrowserActionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    actionId?: boolean
+    userId?: boolean
+    deviceId?: boolean
+    tabId?: boolean
+    conversationId?: boolean
+    actionType?: boolean
+    riskTier?: boolean
+    payloadSummary?: boolean
+    status?: boolean
+    failureReason?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    completedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    conversation?: boolean | BrowserAction$conversationArgs<ExtArgs>
+  }, ExtArgs["result"]["browserAction"]>
+
+  export type BrowserActionSelectScalar = {
+    id?: boolean
+    actionId?: boolean
+    userId?: boolean
+    deviceId?: boolean
+    tabId?: boolean
+    conversationId?: boolean
+    actionType?: boolean
+    riskTier?: boolean
+    payloadSummary?: boolean
+    status?: boolean
+    failureReason?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    completedAt?: boolean
+  }
+
+  export type BrowserActionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "actionId" | "userId" | "deviceId" | "tabId" | "conversationId" | "actionType" | "riskTier" | "payloadSummary" | "status" | "failureReason" | "expiresAt" | "createdAt" | "completedAt", ExtArgs["result"]["browserAction"]>
+  export type BrowserActionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    conversation?: boolean | BrowserAction$conversationArgs<ExtArgs>
+  }
+  export type BrowserActionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    conversation?: boolean | BrowserAction$conversationArgs<ExtArgs>
+  }
+  export type BrowserActionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+    conversation?: boolean | BrowserAction$conversationArgs<ExtArgs>
+  }
+
+  export type $BrowserActionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "BrowserAction"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+      conversation: Prisma.$ConversationPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      actionId: string
+      userId: string
+      deviceId: string | null
+      tabId: number | null
+      conversationId: string | null
+      actionType: string
+      riskTier: string
+      payloadSummary: Prisma.JsonValue
+      status: string
+      failureReason: string | null
+      expiresAt: Date
+      createdAt: Date
+      completedAt: Date | null
+    }, ExtArgs["result"]["browserAction"]>
+    composites: {}
+  }
+
+  type BrowserActionGetPayload<S extends boolean | null | undefined | BrowserActionDefaultArgs> = $Result.GetResult<Prisma.$BrowserActionPayload, S>
+
+  type BrowserActionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<BrowserActionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: BrowserActionCountAggregateInputType | true
+    }
+
+  export interface BrowserActionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['BrowserAction'], meta: { name: 'BrowserAction' } }
+    /**
+     * Find zero or one BrowserAction that matches the filter.
+     * @param {BrowserActionFindUniqueArgs} args - Arguments to find a BrowserAction
+     * @example
+     * // Get one BrowserAction
+     * const browserAction = await prisma.browserAction.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends BrowserActionFindUniqueArgs>(args: SelectSubset<T, BrowserActionFindUniqueArgs<ExtArgs>>): Prisma__BrowserActionClient<$Result.GetResult<Prisma.$BrowserActionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one BrowserAction that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {BrowserActionFindUniqueOrThrowArgs} args - Arguments to find a BrowserAction
+     * @example
+     * // Get one BrowserAction
+     * const browserAction = await prisma.browserAction.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends BrowserActionFindUniqueOrThrowArgs>(args: SelectSubset<T, BrowserActionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BrowserActionClient<$Result.GetResult<Prisma.$BrowserActionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BrowserAction that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BrowserActionFindFirstArgs} args - Arguments to find a BrowserAction
+     * @example
+     * // Get one BrowserAction
+     * const browserAction = await prisma.browserAction.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends BrowserActionFindFirstArgs>(args?: SelectSubset<T, BrowserActionFindFirstArgs<ExtArgs>>): Prisma__BrowserActionClient<$Result.GetResult<Prisma.$BrowserActionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BrowserAction that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BrowserActionFindFirstOrThrowArgs} args - Arguments to find a BrowserAction
+     * @example
+     * // Get one BrowserAction
+     * const browserAction = await prisma.browserAction.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends BrowserActionFindFirstOrThrowArgs>(args?: SelectSubset<T, BrowserActionFindFirstOrThrowArgs<ExtArgs>>): Prisma__BrowserActionClient<$Result.GetResult<Prisma.$BrowserActionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more BrowserActions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BrowserActionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all BrowserActions
+     * const browserActions = await prisma.browserAction.findMany()
+     * 
+     * // Get first 10 BrowserActions
+     * const browserActions = await prisma.browserAction.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const browserActionWithIdOnly = await prisma.browserAction.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends BrowserActionFindManyArgs>(args?: SelectSubset<T, BrowserActionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BrowserActionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a BrowserAction.
+     * @param {BrowserActionCreateArgs} args - Arguments to create a BrowserAction.
+     * @example
+     * // Create one BrowserAction
+     * const BrowserAction = await prisma.browserAction.create({
+     *   data: {
+     *     // ... data to create a BrowserAction
+     *   }
+     * })
+     * 
+     */
+    create<T extends BrowserActionCreateArgs>(args: SelectSubset<T, BrowserActionCreateArgs<ExtArgs>>): Prisma__BrowserActionClient<$Result.GetResult<Prisma.$BrowserActionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many BrowserActions.
+     * @param {BrowserActionCreateManyArgs} args - Arguments to create many BrowserActions.
+     * @example
+     * // Create many BrowserActions
+     * const browserAction = await prisma.browserAction.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends BrowserActionCreateManyArgs>(args?: SelectSubset<T, BrowserActionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many BrowserActions and returns the data saved in the database.
+     * @param {BrowserActionCreateManyAndReturnArgs} args - Arguments to create many BrowserActions.
+     * @example
+     * // Create many BrowserActions
+     * const browserAction = await prisma.browserAction.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many BrowserActions and only return the `id`
+     * const browserActionWithIdOnly = await prisma.browserAction.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends BrowserActionCreateManyAndReturnArgs>(args?: SelectSubset<T, BrowserActionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BrowserActionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a BrowserAction.
+     * @param {BrowserActionDeleteArgs} args - Arguments to delete one BrowserAction.
+     * @example
+     * // Delete one BrowserAction
+     * const BrowserAction = await prisma.browserAction.delete({
+     *   where: {
+     *     // ... filter to delete one BrowserAction
+     *   }
+     * })
+     * 
+     */
+    delete<T extends BrowserActionDeleteArgs>(args: SelectSubset<T, BrowserActionDeleteArgs<ExtArgs>>): Prisma__BrowserActionClient<$Result.GetResult<Prisma.$BrowserActionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one BrowserAction.
+     * @param {BrowserActionUpdateArgs} args - Arguments to update one BrowserAction.
+     * @example
+     * // Update one BrowserAction
+     * const browserAction = await prisma.browserAction.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends BrowserActionUpdateArgs>(args: SelectSubset<T, BrowserActionUpdateArgs<ExtArgs>>): Prisma__BrowserActionClient<$Result.GetResult<Prisma.$BrowserActionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more BrowserActions.
+     * @param {BrowserActionDeleteManyArgs} args - Arguments to filter BrowserActions to delete.
+     * @example
+     * // Delete a few BrowserActions
+     * const { count } = await prisma.browserAction.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends BrowserActionDeleteManyArgs>(args?: SelectSubset<T, BrowserActionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BrowserActions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BrowserActionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many BrowserActions
+     * const browserAction = await prisma.browserAction.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends BrowserActionUpdateManyArgs>(args: SelectSubset<T, BrowserActionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BrowserActions and returns the data updated in the database.
+     * @param {BrowserActionUpdateManyAndReturnArgs} args - Arguments to update many BrowserActions.
+     * @example
+     * // Update many BrowserActions
+     * const browserAction = await prisma.browserAction.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more BrowserActions and only return the `id`
+     * const browserActionWithIdOnly = await prisma.browserAction.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends BrowserActionUpdateManyAndReturnArgs>(args: SelectSubset<T, BrowserActionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BrowserActionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one BrowserAction.
+     * @param {BrowserActionUpsertArgs} args - Arguments to update or create a BrowserAction.
+     * @example
+     * // Update or create a BrowserAction
+     * const browserAction = await prisma.browserAction.upsert({
+     *   create: {
+     *     // ... data to create a BrowserAction
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the BrowserAction we want to update
+     *   }
+     * })
+     */
+    upsert<T extends BrowserActionUpsertArgs>(args: SelectSubset<T, BrowserActionUpsertArgs<ExtArgs>>): Prisma__BrowserActionClient<$Result.GetResult<Prisma.$BrowserActionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of BrowserActions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BrowserActionCountArgs} args - Arguments to filter BrowserActions to count.
+     * @example
+     * // Count the number of BrowserActions
+     * const count = await prisma.browserAction.count({
+     *   where: {
+     *     // ... the filter for the BrowserActions we want to count
+     *   }
+     * })
+    **/
+    count<T extends BrowserActionCountArgs>(
+      args?: Subset<T, BrowserActionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], BrowserActionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a BrowserAction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BrowserActionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends BrowserActionAggregateArgs>(args: Subset<T, BrowserActionAggregateArgs>): Prisma.PrismaPromise<GetBrowserActionAggregateType<T>>
+
+    /**
+     * Group by BrowserAction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BrowserActionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends BrowserActionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: BrowserActionGroupByArgs['orderBy'] }
+        : { orderBy?: BrowserActionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, BrowserActionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBrowserActionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the BrowserAction model
+   */
+  readonly fields: BrowserActionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for BrowserAction.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__BrowserActionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    conversation<T extends BrowserAction$conversationArgs<ExtArgs> = {}>(args?: Subset<T, BrowserAction$conversationArgs<ExtArgs>>): Prisma__ConversationClient<$Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the BrowserAction model
+   */
+  interface BrowserActionFieldRefs {
+    readonly id: FieldRef<"BrowserAction", 'String'>
+    readonly actionId: FieldRef<"BrowserAction", 'String'>
+    readonly userId: FieldRef<"BrowserAction", 'String'>
+    readonly deviceId: FieldRef<"BrowserAction", 'String'>
+    readonly tabId: FieldRef<"BrowserAction", 'Int'>
+    readonly conversationId: FieldRef<"BrowserAction", 'String'>
+    readonly actionType: FieldRef<"BrowserAction", 'String'>
+    readonly riskTier: FieldRef<"BrowserAction", 'String'>
+    readonly payloadSummary: FieldRef<"BrowserAction", 'Json'>
+    readonly status: FieldRef<"BrowserAction", 'String'>
+    readonly failureReason: FieldRef<"BrowserAction", 'String'>
+    readonly expiresAt: FieldRef<"BrowserAction", 'DateTime'>
+    readonly createdAt: FieldRef<"BrowserAction", 'DateTime'>
+    readonly completedAt: FieldRef<"BrowserAction", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * BrowserAction findUnique
+   */
+  export type BrowserActionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BrowserAction
+     */
+    select?: BrowserActionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BrowserAction
+     */
+    omit?: BrowserActionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BrowserActionInclude<ExtArgs> | null
+    /**
+     * Filter, which BrowserAction to fetch.
+     */
+    where: BrowserActionWhereUniqueInput
+  }
+
+  /**
+   * BrowserAction findUniqueOrThrow
+   */
+  export type BrowserActionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BrowserAction
+     */
+    select?: BrowserActionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BrowserAction
+     */
+    omit?: BrowserActionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BrowserActionInclude<ExtArgs> | null
+    /**
+     * Filter, which BrowserAction to fetch.
+     */
+    where: BrowserActionWhereUniqueInput
+  }
+
+  /**
+   * BrowserAction findFirst
+   */
+  export type BrowserActionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BrowserAction
+     */
+    select?: BrowserActionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BrowserAction
+     */
+    omit?: BrowserActionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BrowserActionInclude<ExtArgs> | null
+    /**
+     * Filter, which BrowserAction to fetch.
+     */
+    where?: BrowserActionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BrowserActions to fetch.
+     */
+    orderBy?: BrowserActionOrderByWithRelationInput | BrowserActionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BrowserActions.
+     */
+    cursor?: BrowserActionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BrowserActions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BrowserActions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BrowserActions.
+     */
+    distinct?: BrowserActionScalarFieldEnum | BrowserActionScalarFieldEnum[]
+  }
+
+  /**
+   * BrowserAction findFirstOrThrow
+   */
+  export type BrowserActionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BrowserAction
+     */
+    select?: BrowserActionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BrowserAction
+     */
+    omit?: BrowserActionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BrowserActionInclude<ExtArgs> | null
+    /**
+     * Filter, which BrowserAction to fetch.
+     */
+    where?: BrowserActionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BrowserActions to fetch.
+     */
+    orderBy?: BrowserActionOrderByWithRelationInput | BrowserActionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BrowserActions.
+     */
+    cursor?: BrowserActionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BrowserActions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BrowserActions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BrowserActions.
+     */
+    distinct?: BrowserActionScalarFieldEnum | BrowserActionScalarFieldEnum[]
+  }
+
+  /**
+   * BrowserAction findMany
+   */
+  export type BrowserActionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BrowserAction
+     */
+    select?: BrowserActionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BrowserAction
+     */
+    omit?: BrowserActionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BrowserActionInclude<ExtArgs> | null
+    /**
+     * Filter, which BrowserActions to fetch.
+     */
+    where?: BrowserActionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BrowserActions to fetch.
+     */
+    orderBy?: BrowserActionOrderByWithRelationInput | BrowserActionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing BrowserActions.
+     */
+    cursor?: BrowserActionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BrowserActions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BrowserActions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BrowserActions.
+     */
+    distinct?: BrowserActionScalarFieldEnum | BrowserActionScalarFieldEnum[]
+  }
+
+  /**
+   * BrowserAction create
+   */
+  export type BrowserActionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BrowserAction
+     */
+    select?: BrowserActionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BrowserAction
+     */
+    omit?: BrowserActionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BrowserActionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a BrowserAction.
+     */
+    data: XOR<BrowserActionCreateInput, BrowserActionUncheckedCreateInput>
+  }
+
+  /**
+   * BrowserAction createMany
+   */
+  export type BrowserActionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many BrowserActions.
+     */
+    data: BrowserActionCreateManyInput | BrowserActionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * BrowserAction createManyAndReturn
+   */
+  export type BrowserActionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BrowserAction
+     */
+    select?: BrowserActionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BrowserAction
+     */
+    omit?: BrowserActionOmit<ExtArgs> | null
+    /**
+     * The data used to create many BrowserActions.
+     */
+    data: BrowserActionCreateManyInput | BrowserActionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BrowserActionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BrowserAction update
+   */
+  export type BrowserActionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BrowserAction
+     */
+    select?: BrowserActionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BrowserAction
+     */
+    omit?: BrowserActionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BrowserActionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a BrowserAction.
+     */
+    data: XOR<BrowserActionUpdateInput, BrowserActionUncheckedUpdateInput>
+    /**
+     * Choose, which BrowserAction to update.
+     */
+    where: BrowserActionWhereUniqueInput
+  }
+
+  /**
+   * BrowserAction updateMany
+   */
+  export type BrowserActionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update BrowserActions.
+     */
+    data: XOR<BrowserActionUpdateManyMutationInput, BrowserActionUncheckedUpdateManyInput>
+    /**
+     * Filter which BrowserActions to update
+     */
+    where?: BrowserActionWhereInput
+    /**
+     * Limit how many BrowserActions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * BrowserAction updateManyAndReturn
+   */
+  export type BrowserActionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BrowserAction
+     */
+    select?: BrowserActionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BrowserAction
+     */
+    omit?: BrowserActionOmit<ExtArgs> | null
+    /**
+     * The data used to update BrowserActions.
+     */
+    data: XOR<BrowserActionUpdateManyMutationInput, BrowserActionUncheckedUpdateManyInput>
+    /**
+     * Filter which BrowserActions to update
+     */
+    where?: BrowserActionWhereInput
+    /**
+     * Limit how many BrowserActions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BrowserActionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * BrowserAction upsert
+   */
+  export type BrowserActionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BrowserAction
+     */
+    select?: BrowserActionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BrowserAction
+     */
+    omit?: BrowserActionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BrowserActionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the BrowserAction to update in case it exists.
+     */
+    where: BrowserActionWhereUniqueInput
+    /**
+     * In case the BrowserAction found by the `where` argument doesn't exist, create a new BrowserAction with this data.
+     */
+    create: XOR<BrowserActionCreateInput, BrowserActionUncheckedCreateInput>
+    /**
+     * In case the BrowserAction was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<BrowserActionUpdateInput, BrowserActionUncheckedUpdateInput>
+  }
+
+  /**
+   * BrowserAction delete
+   */
+  export type BrowserActionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BrowserAction
+     */
+    select?: BrowserActionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BrowserAction
+     */
+    omit?: BrowserActionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BrowserActionInclude<ExtArgs> | null
+    /**
+     * Filter which BrowserAction to delete.
+     */
+    where: BrowserActionWhereUniqueInput
+  }
+
+  /**
+   * BrowserAction deleteMany
+   */
+  export type BrowserActionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BrowserActions to delete
+     */
+    where?: BrowserActionWhereInput
+    /**
+     * Limit how many BrowserActions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * BrowserAction.conversation
+   */
+  export type BrowserAction$conversationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Conversation
+     */
+    select?: ConversationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Conversation
+     */
+    omit?: ConversationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ConversationInclude<ExtArgs> | null
+    where?: ConversationWhereInput
+  }
+
+  /**
+   * BrowserAction without action
+   */
+  export type BrowserActionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BrowserAction
+     */
+    select?: BrowserActionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BrowserAction
+     */
+    omit?: BrowserActionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BrowserActionInclude<ExtArgs> | null
   }
 
 
@@ -3736,6 +5200,7 @@ export namespace Prisma {
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
     messages?: boolean | Conversation$messagesArgs<ExtArgs>
+    browserActions?: boolean | Conversation$browserActionsArgs<ExtArgs>
     _count?: boolean | ConversationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["conversation"]>
 
@@ -3769,6 +5234,7 @@ export namespace Prisma {
   export type ConversationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     messages?: boolean | Conversation$messagesArgs<ExtArgs>
+    browserActions?: boolean | Conversation$browserActionsArgs<ExtArgs>
     _count?: boolean | ConversationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ConversationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3783,6 +5249,7 @@ export namespace Prisma {
     objects: {
       user: Prisma.$UserPayload<ExtArgs>
       messages: Prisma.$MessagePayload<ExtArgs>[]
+      browserActions: Prisma.$BrowserActionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4186,6 +5653,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     messages<T extends Conversation$messagesArgs<ExtArgs> = {}>(args?: Subset<T, Conversation$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    browserActions<T extends Conversation$browserActionsArgs<ExtArgs> = {}>(args?: Subset<T, Conversation$browserActionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BrowserActionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4642,6 +6110,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: MessageScalarFieldEnum | MessageScalarFieldEnum[]
+  }
+
+  /**
+   * Conversation.browserActions
+   */
+  export type Conversation$browserActionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BrowserAction
+     */
+    select?: BrowserActionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BrowserAction
+     */
+    omit?: BrowserActionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: BrowserActionInclude<ExtArgs> | null
+    where?: BrowserActionWhereInput
+    orderBy?: BrowserActionOrderByWithRelationInput | BrowserActionOrderByWithRelationInput[]
+    cursor?: BrowserActionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: BrowserActionScalarFieldEnum | BrowserActionScalarFieldEnum[]
   }
 
   /**
@@ -6844,11 +8336,35 @@ export namespace Prisma {
     displayName: 'displayName',
     voicePreference: 'voicePreference',
     passwordHash: 'passwordHash',
+    lastLatitude: 'lastLatitude',
+    lastLongitude: 'lastLongitude',
+    lastLocationLabel: 'lastLocationLabel',
+    locationUpdatedAt: 'locationUpdatedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+  export const BrowserActionScalarFieldEnum: {
+    id: 'id',
+    actionId: 'actionId',
+    userId: 'userId',
+    deviceId: 'deviceId',
+    tabId: 'tabId',
+    conversationId: 'conversationId',
+    actionType: 'actionType',
+    riskTier: 'riskTier',
+    payloadSummary: 'payloadSummary',
+    status: 'status',
+    failureReason: 'failureReason',
+    expiresAt: 'expiresAt',
+    createdAt: 'createdAt',
+    completedAt: 'completedAt'
+  };
+
+  export type BrowserActionScalarFieldEnum = (typeof BrowserActionScalarFieldEnum)[keyof typeof BrowserActionScalarFieldEnum]
 
 
   export const SessionScalarFieldEnum: {
@@ -6907,6 +8423,13 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const JsonNullValueInput: {
+    JsonNull: typeof JsonNull
+  };
+
+  export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
   export const NullableJsonNullValueInput: {
     DbNull: typeof DbNull,
     JsonNull: typeof JsonNull
@@ -6960,6 +8483,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -6970,20 +8507,6 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Json'
-   */
-  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-  /**
-   * Reference to a field of type 'QueryMode'
-   */
-  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -6999,6 +8522,20 @@ export namespace Prisma {
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
   /**
    * Deep Input Types
    */
@@ -7013,11 +8550,16 @@ export namespace Prisma {
     displayName?: StringNullableFilter<"User"> | string | null
     voicePreference?: StringFilter<"User"> | string
     passwordHash?: StringFilter<"User"> | string
+    lastLatitude?: FloatNullableFilter<"User"> | number | null
+    lastLongitude?: FloatNullableFilter<"User"> | number | null
+    lastLocationLabel?: StringNullableFilter<"User"> | string | null
+    locationUpdatedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     sessions?: SessionListRelationFilter
     conversations?: ConversationListRelationFilter
     memories?: MemoryListRelationFilter
+    browserActions?: BrowserActionListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -7026,11 +8568,16 @@ export namespace Prisma {
     displayName?: SortOrderInput | SortOrder
     voicePreference?: SortOrder
     passwordHash?: SortOrder
+    lastLatitude?: SortOrderInput | SortOrder
+    lastLongitude?: SortOrderInput | SortOrder
+    lastLocationLabel?: SortOrderInput | SortOrder
+    locationUpdatedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     sessions?: SessionOrderByRelationAggregateInput
     conversations?: ConversationOrderByRelationAggregateInput
     memories?: MemoryOrderByRelationAggregateInput
+    browserActions?: BrowserActionOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -7042,11 +8589,16 @@ export namespace Prisma {
     displayName?: StringNullableFilter<"User"> | string | null
     voicePreference?: StringFilter<"User"> | string
     passwordHash?: StringFilter<"User"> | string
+    lastLatitude?: FloatNullableFilter<"User"> | number | null
+    lastLongitude?: FloatNullableFilter<"User"> | number | null
+    lastLocationLabel?: StringNullableFilter<"User"> | string | null
+    locationUpdatedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     sessions?: SessionListRelationFilter
     conversations?: ConversationListRelationFilter
     memories?: MemoryListRelationFilter
+    browserActions?: BrowserActionListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -7055,11 +8607,17 @@ export namespace Prisma {
     displayName?: SortOrderInput | SortOrder
     voicePreference?: SortOrder
     passwordHash?: SortOrder
+    lastLatitude?: SortOrderInput | SortOrder
+    lastLongitude?: SortOrderInput | SortOrder
+    lastLocationLabel?: SortOrderInput | SortOrder
+    locationUpdatedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
+    _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
+    _sum?: UserSumOrderByAggregateInput
   }
 
   export type UserScalarWhereWithAggregatesInput = {
@@ -7071,8 +8629,117 @@ export namespace Prisma {
     displayName?: StringNullableWithAggregatesFilter<"User"> | string | null
     voicePreference?: StringWithAggregatesFilter<"User"> | string
     passwordHash?: StringWithAggregatesFilter<"User"> | string
+    lastLatitude?: FloatNullableWithAggregatesFilter<"User"> | number | null
+    lastLongitude?: FloatNullableWithAggregatesFilter<"User"> | number | null
+    lastLocationLabel?: StringNullableWithAggregatesFilter<"User"> | string | null
+    locationUpdatedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
+  }
+
+  export type BrowserActionWhereInput = {
+    AND?: BrowserActionWhereInput | BrowserActionWhereInput[]
+    OR?: BrowserActionWhereInput[]
+    NOT?: BrowserActionWhereInput | BrowserActionWhereInput[]
+    id?: UuidFilter<"BrowserAction"> | string
+    actionId?: StringFilter<"BrowserAction"> | string
+    userId?: UuidFilter<"BrowserAction"> | string
+    deviceId?: StringNullableFilter<"BrowserAction"> | string | null
+    tabId?: IntNullableFilter<"BrowserAction"> | number | null
+    conversationId?: UuidNullableFilter<"BrowserAction"> | string | null
+    actionType?: StringFilter<"BrowserAction"> | string
+    riskTier?: StringFilter<"BrowserAction"> | string
+    payloadSummary?: JsonFilter<"BrowserAction">
+    status?: StringFilter<"BrowserAction"> | string
+    failureReason?: StringNullableFilter<"BrowserAction"> | string | null
+    expiresAt?: DateTimeFilter<"BrowserAction"> | Date | string
+    createdAt?: DateTimeFilter<"BrowserAction"> | Date | string
+    completedAt?: DateTimeNullableFilter<"BrowserAction"> | Date | string | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    conversation?: XOR<ConversationNullableScalarRelationFilter, ConversationWhereInput> | null
+  }
+
+  export type BrowserActionOrderByWithRelationInput = {
+    id?: SortOrder
+    actionId?: SortOrder
+    userId?: SortOrder
+    deviceId?: SortOrderInput | SortOrder
+    tabId?: SortOrderInput | SortOrder
+    conversationId?: SortOrderInput | SortOrder
+    actionType?: SortOrder
+    riskTier?: SortOrder
+    payloadSummary?: SortOrder
+    status?: SortOrder
+    failureReason?: SortOrderInput | SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    user?: UserOrderByWithRelationInput
+    conversation?: ConversationOrderByWithRelationInput
+  }
+
+  export type BrowserActionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    actionId?: string
+    AND?: BrowserActionWhereInput | BrowserActionWhereInput[]
+    OR?: BrowserActionWhereInput[]
+    NOT?: BrowserActionWhereInput | BrowserActionWhereInput[]
+    userId?: UuidFilter<"BrowserAction"> | string
+    deviceId?: StringNullableFilter<"BrowserAction"> | string | null
+    tabId?: IntNullableFilter<"BrowserAction"> | number | null
+    conversationId?: UuidNullableFilter<"BrowserAction"> | string | null
+    actionType?: StringFilter<"BrowserAction"> | string
+    riskTier?: StringFilter<"BrowserAction"> | string
+    payloadSummary?: JsonFilter<"BrowserAction">
+    status?: StringFilter<"BrowserAction"> | string
+    failureReason?: StringNullableFilter<"BrowserAction"> | string | null
+    expiresAt?: DateTimeFilter<"BrowserAction"> | Date | string
+    createdAt?: DateTimeFilter<"BrowserAction"> | Date | string
+    completedAt?: DateTimeNullableFilter<"BrowserAction"> | Date | string | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+    conversation?: XOR<ConversationNullableScalarRelationFilter, ConversationWhereInput> | null
+  }, "id" | "actionId">
+
+  export type BrowserActionOrderByWithAggregationInput = {
+    id?: SortOrder
+    actionId?: SortOrder
+    userId?: SortOrder
+    deviceId?: SortOrderInput | SortOrder
+    tabId?: SortOrderInput | SortOrder
+    conversationId?: SortOrderInput | SortOrder
+    actionType?: SortOrder
+    riskTier?: SortOrder
+    payloadSummary?: SortOrder
+    status?: SortOrder
+    failureReason?: SortOrderInput | SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    _count?: BrowserActionCountOrderByAggregateInput
+    _avg?: BrowserActionAvgOrderByAggregateInput
+    _max?: BrowserActionMaxOrderByAggregateInput
+    _min?: BrowserActionMinOrderByAggregateInput
+    _sum?: BrowserActionSumOrderByAggregateInput
+  }
+
+  export type BrowserActionScalarWhereWithAggregatesInput = {
+    AND?: BrowserActionScalarWhereWithAggregatesInput | BrowserActionScalarWhereWithAggregatesInput[]
+    OR?: BrowserActionScalarWhereWithAggregatesInput[]
+    NOT?: BrowserActionScalarWhereWithAggregatesInput | BrowserActionScalarWhereWithAggregatesInput[]
+    id?: UuidWithAggregatesFilter<"BrowserAction"> | string
+    actionId?: StringWithAggregatesFilter<"BrowserAction"> | string
+    userId?: UuidWithAggregatesFilter<"BrowserAction"> | string
+    deviceId?: StringNullableWithAggregatesFilter<"BrowserAction"> | string | null
+    tabId?: IntNullableWithAggregatesFilter<"BrowserAction"> | number | null
+    conversationId?: UuidNullableWithAggregatesFilter<"BrowserAction"> | string | null
+    actionType?: StringWithAggregatesFilter<"BrowserAction"> | string
+    riskTier?: StringWithAggregatesFilter<"BrowserAction"> | string
+    payloadSummary?: JsonWithAggregatesFilter<"BrowserAction">
+    status?: StringWithAggregatesFilter<"BrowserAction"> | string
+    failureReason?: StringNullableWithAggregatesFilter<"BrowserAction"> | string | null
+    expiresAt?: DateTimeWithAggregatesFilter<"BrowserAction"> | Date | string
+    createdAt?: DateTimeWithAggregatesFilter<"BrowserAction"> | Date | string
+    completedAt?: DateTimeNullableWithAggregatesFilter<"BrowserAction"> | Date | string | null
   }
 
   export type SessionWhereInput = {
@@ -7146,6 +8813,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Conversation"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     messages?: MessageListRelationFilter
+    browserActions?: BrowserActionListRelationFilter
   }
 
   export type ConversationOrderByWithRelationInput = {
@@ -7156,6 +8824,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
     messages?: MessageOrderByRelationAggregateInput
+    browserActions?: BrowserActionOrderByRelationAggregateInput
   }
 
   export type ConversationWhereUniqueInput = Prisma.AtLeast<{
@@ -7169,6 +8838,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Conversation"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
     messages?: MessageListRelationFilter
+    browserActions?: BrowserActionListRelationFilter
   }, "id">
 
   export type ConversationOrderByWithAggregationInput = {
@@ -7324,11 +8994,16 @@ export namespace Prisma {
     displayName?: string | null
     voicePreference?: string
     passwordHash: string
+    lastLatitude?: number | null
+    lastLongitude?: number | null
+    lastLocationLabel?: string | null
+    locationUpdatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     sessions?: SessionCreateNestedManyWithoutUserInput
     conversations?: ConversationCreateNestedManyWithoutUserInput
     memories?: MemoryCreateNestedManyWithoutUserInput
+    browserActions?: BrowserActionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -7337,11 +9012,16 @@ export namespace Prisma {
     displayName?: string | null
     voicePreference?: string
     passwordHash: string
+    lastLatitude?: number | null
+    lastLongitude?: number | null
+    lastLocationLabel?: string | null
+    locationUpdatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     conversations?: ConversationUncheckedCreateNestedManyWithoutUserInput
     memories?: MemoryUncheckedCreateNestedManyWithoutUserInput
+    browserActions?: BrowserActionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -7350,11 +9030,16 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
+    lastLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLocationLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    locationUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUpdateManyWithoutUserNestedInput
     conversations?: ConversationUpdateManyWithoutUserNestedInput
     memories?: MemoryUpdateManyWithoutUserNestedInput
+    browserActions?: BrowserActionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -7363,11 +9048,16 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
+    lastLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLocationLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    locationUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     conversations?: ConversationUncheckedUpdateManyWithoutUserNestedInput
     memories?: MemoryUncheckedUpdateManyWithoutUserNestedInput
+    browserActions?: BrowserActionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -7376,6 +9066,10 @@ export namespace Prisma {
     displayName?: string | null
     voicePreference?: string
     passwordHash: string
+    lastLatitude?: number | null
+    lastLongitude?: number | null
+    lastLocationLabel?: string | null
+    locationUpdatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -7386,6 +9080,10 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
+    lastLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLocationLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    locationUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -7396,8 +9094,129 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
+    lastLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLocationLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    locationUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BrowserActionCreateInput = {
+    id?: string
+    actionId: string
+    deviceId?: string | null
+    tabId?: number | null
+    actionType: string
+    riskTier: string
+    payloadSummary: JsonNullValueInput | InputJsonValue
+    status: string
+    failureReason?: string | null
+    expiresAt: Date | string
+    createdAt?: Date | string
+    completedAt?: Date | string | null
+    user: UserCreateNestedOneWithoutBrowserActionsInput
+    conversation?: ConversationCreateNestedOneWithoutBrowserActionsInput
+  }
+
+  export type BrowserActionUncheckedCreateInput = {
+    id?: string
+    actionId: string
+    userId: string
+    deviceId?: string | null
+    tabId?: number | null
+    conversationId?: string | null
+    actionType: string
+    riskTier: string
+    payloadSummary: JsonNullValueInput | InputJsonValue
+    status: string
+    failureReason?: string | null
+    expiresAt: Date | string
+    createdAt?: Date | string
+    completedAt?: Date | string | null
+  }
+
+  export type BrowserActionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    actionId?: StringFieldUpdateOperationsInput | string
+    deviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    tabId?: NullableIntFieldUpdateOperationsInput | number | null
+    actionType?: StringFieldUpdateOperationsInput | string
+    riskTier?: StringFieldUpdateOperationsInput | string
+    payloadSummary?: JsonNullValueInput | InputJsonValue
+    status?: StringFieldUpdateOperationsInput | string
+    failureReason?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    user?: UserUpdateOneRequiredWithoutBrowserActionsNestedInput
+    conversation?: ConversationUpdateOneWithoutBrowserActionsNestedInput
+  }
+
+  export type BrowserActionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    actionId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    deviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    tabId?: NullableIntFieldUpdateOperationsInput | number | null
+    conversationId?: NullableStringFieldUpdateOperationsInput | string | null
+    actionType?: StringFieldUpdateOperationsInput | string
+    riskTier?: StringFieldUpdateOperationsInput | string
+    payloadSummary?: JsonNullValueInput | InputJsonValue
+    status?: StringFieldUpdateOperationsInput | string
+    failureReason?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type BrowserActionCreateManyInput = {
+    id?: string
+    actionId: string
+    userId: string
+    deviceId?: string | null
+    tabId?: number | null
+    conversationId?: string | null
+    actionType: string
+    riskTier: string
+    payloadSummary: JsonNullValueInput | InputJsonValue
+    status: string
+    failureReason?: string | null
+    expiresAt: Date | string
+    createdAt?: Date | string
+    completedAt?: Date | string | null
+  }
+
+  export type BrowserActionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    actionId?: StringFieldUpdateOperationsInput | string
+    deviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    tabId?: NullableIntFieldUpdateOperationsInput | number | null
+    actionType?: StringFieldUpdateOperationsInput | string
+    riskTier?: StringFieldUpdateOperationsInput | string
+    payloadSummary?: JsonNullValueInput | InputJsonValue
+    status?: StringFieldUpdateOperationsInput | string
+    failureReason?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type BrowserActionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    actionId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    deviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    tabId?: NullableIntFieldUpdateOperationsInput | number | null
+    conversationId?: NullableStringFieldUpdateOperationsInput | string | null
+    actionType?: StringFieldUpdateOperationsInput | string
+    riskTier?: StringFieldUpdateOperationsInput | string
+    payloadSummary?: JsonNullValueInput | InputJsonValue
+    status?: StringFieldUpdateOperationsInput | string
+    failureReason?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type SessionCreateInput = {
@@ -7469,6 +9288,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutConversationsInput
     messages?: MessageCreateNestedManyWithoutConversationInput
+    browserActions?: BrowserActionCreateNestedManyWithoutConversationInput
   }
 
   export type ConversationUncheckedCreateInput = {
@@ -7478,6 +9298,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     messages?: MessageUncheckedCreateNestedManyWithoutConversationInput
+    browserActions?: BrowserActionUncheckedCreateNestedManyWithoutConversationInput
   }
 
   export type ConversationUpdateInput = {
@@ -7487,6 +9308,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutConversationsNestedInput
     messages?: MessageUpdateManyWithoutConversationNestedInput
+    browserActions?: BrowserActionUpdateManyWithoutConversationNestedInput
   }
 
   export type ConversationUncheckedUpdateInput = {
@@ -7496,6 +9318,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     messages?: MessageUncheckedUpdateManyWithoutConversationNestedInput
+    browserActions?: BrowserActionUncheckedUpdateManyWithoutConversationNestedInput
   }
 
   export type ConversationCreateManyInput = {
@@ -7694,6 +9517,28 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -7723,6 +9568,12 @@ export namespace Prisma {
     none?: MemoryWhereInput
   }
 
+  export type BrowserActionListRelationFilter = {
+    every?: BrowserActionWhereInput
+    some?: BrowserActionWhereInput
+    none?: BrowserActionWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -7740,14 +9591,27 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type BrowserActionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
     displayName?: SortOrder
     voicePreference?: SortOrder
     passwordHash?: SortOrder
+    lastLatitude?: SortOrder
+    lastLongitude?: SortOrder
+    lastLocationLabel?: SortOrder
+    locationUpdatedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type UserAvgOrderByAggregateInput = {
+    lastLatitude?: SortOrder
+    lastLongitude?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -7756,6 +9620,10 @@ export namespace Prisma {
     displayName?: SortOrder
     voicePreference?: SortOrder
     passwordHash?: SortOrder
+    lastLatitude?: SortOrder
+    lastLongitude?: SortOrder
+    lastLocationLabel?: SortOrder
+    locationUpdatedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -7766,8 +9634,17 @@ export namespace Prisma {
     displayName?: SortOrder
     voicePreference?: SortOrder
     passwordHash?: SortOrder
+    lastLatitude?: SortOrder
+    lastLongitude?: SortOrder
+    lastLocationLabel?: SortOrder
+    locationUpdatedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type UserSumOrderByAggregateInput = {
+    lastLatitude?: SortOrder
+    lastLongitude?: SortOrder
   }
 
   export type UuidWithAggregatesFilter<$PrismaModel = never> = {
@@ -7821,6 +9698,36 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -7835,20 +9742,174 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type UuidNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
+  }
+  export type JsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
+  }
+
+  export type ConversationNullableScalarRelationFilter = {
+    is?: ConversationWhereInput | null
+    isNot?: ConversationWhereInput | null
+  }
+
+  export type BrowserActionCountOrderByAggregateInput = {
+    id?: SortOrder
+    actionId?: SortOrder
+    userId?: SortOrder
+    deviceId?: SortOrder
+    tabId?: SortOrder
+    conversationId?: SortOrder
+    actionType?: SortOrder
+    riskTier?: SortOrder
+    payloadSummary?: SortOrder
+    status?: SortOrder
+    failureReason?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    completedAt?: SortOrder
+  }
+
+  export type BrowserActionAvgOrderByAggregateInput = {
+    tabId?: SortOrder
+  }
+
+  export type BrowserActionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    actionId?: SortOrder
+    userId?: SortOrder
+    deviceId?: SortOrder
+    tabId?: SortOrder
+    conversationId?: SortOrder
+    actionType?: SortOrder
+    riskTier?: SortOrder
+    status?: SortOrder
+    failureReason?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    completedAt?: SortOrder
+  }
+
+  export type BrowserActionMinOrderByAggregateInput = {
+    id?: SortOrder
+    actionId?: SortOrder
+    userId?: SortOrder
+    deviceId?: SortOrder
+    tabId?: SortOrder
+    conversationId?: SortOrder
+    actionType?: SortOrder
+    riskTier?: SortOrder
+    status?: SortOrder
+    failureReason?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    completedAt?: SortOrder
+  }
+
+  export type BrowserActionSumOrderByAggregateInput = {
+    tabId?: SortOrder
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type UuidNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+  export type JsonWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedJsonFilter<$PrismaModel>
+    _max?: NestedJsonFilter<$PrismaModel>
   }
 
   export type SessionCountOrderByAggregateInput = {
@@ -7876,20 +9937,6 @@ export namespace Prisma {
     expiresAt?: SortOrder
     createdAt?: SortOrder
     revokedAt?: SortOrder
-  }
-
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type MessageListRelationFilter = {
@@ -8056,6 +10103,13 @@ export namespace Prisma {
     connect?: MemoryWhereUniqueInput | MemoryWhereUniqueInput[]
   }
 
+  export type BrowserActionCreateNestedManyWithoutUserInput = {
+    create?: XOR<BrowserActionCreateWithoutUserInput, BrowserActionUncheckedCreateWithoutUserInput> | BrowserActionCreateWithoutUserInput[] | BrowserActionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BrowserActionCreateOrConnectWithoutUserInput | BrowserActionCreateOrConnectWithoutUserInput[]
+    createMany?: BrowserActionCreateManyUserInputEnvelope
+    connect?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
+  }
+
   export type SessionUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -8077,12 +10131,31 @@ export namespace Prisma {
     connect?: MemoryWhereUniqueInput | MemoryWhereUniqueInput[]
   }
 
+  export type BrowserActionUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<BrowserActionCreateWithoutUserInput, BrowserActionUncheckedCreateWithoutUserInput> | BrowserActionCreateWithoutUserInput[] | BrowserActionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BrowserActionCreateOrConnectWithoutUserInput | BrowserActionCreateOrConnectWithoutUserInput[]
+    createMany?: BrowserActionCreateManyUserInputEnvelope
+    connect?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
 
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
@@ -8131,6 +10204,20 @@ export namespace Prisma {
     deleteMany?: MemoryScalarWhereInput | MemoryScalarWhereInput[]
   }
 
+  export type BrowserActionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<BrowserActionCreateWithoutUserInput, BrowserActionUncheckedCreateWithoutUserInput> | BrowserActionCreateWithoutUserInput[] | BrowserActionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BrowserActionCreateOrConnectWithoutUserInput | BrowserActionCreateOrConnectWithoutUserInput[]
+    upsert?: BrowserActionUpsertWithWhereUniqueWithoutUserInput | BrowserActionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: BrowserActionCreateManyUserInputEnvelope
+    set?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
+    disconnect?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
+    delete?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
+    connect?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
+    update?: BrowserActionUpdateWithWhereUniqueWithoutUserInput | BrowserActionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: BrowserActionUpdateManyWithWhereWithoutUserInput | BrowserActionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: BrowserActionScalarWhereInput | BrowserActionScalarWhereInput[]
+  }
+
   export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -8173,14 +10260,62 @@ export namespace Prisma {
     deleteMany?: MemoryScalarWhereInput | MemoryScalarWhereInput[]
   }
 
+  export type BrowserActionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<BrowserActionCreateWithoutUserInput, BrowserActionUncheckedCreateWithoutUserInput> | BrowserActionCreateWithoutUserInput[] | BrowserActionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: BrowserActionCreateOrConnectWithoutUserInput | BrowserActionCreateOrConnectWithoutUserInput[]
+    upsert?: BrowserActionUpsertWithWhereUniqueWithoutUserInput | BrowserActionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: BrowserActionCreateManyUserInputEnvelope
+    set?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
+    disconnect?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
+    delete?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
+    connect?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
+    update?: BrowserActionUpdateWithWhereUniqueWithoutUserInput | BrowserActionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: BrowserActionUpdateManyWithWhereWithoutUserInput | BrowserActionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: BrowserActionScalarWhereInput | BrowserActionScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutBrowserActionsInput = {
+    create?: XOR<UserCreateWithoutBrowserActionsInput, UserUncheckedCreateWithoutBrowserActionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBrowserActionsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ConversationCreateNestedOneWithoutBrowserActionsInput = {
+    create?: XOR<ConversationCreateWithoutBrowserActionsInput, ConversationUncheckedCreateWithoutBrowserActionsInput>
+    connectOrCreate?: ConversationCreateOrConnectWithoutBrowserActionsInput
+    connect?: ConversationWhereUniqueInput
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type UserUpdateOneRequiredWithoutBrowserActionsNestedInput = {
+    create?: XOR<UserCreateWithoutBrowserActionsInput, UserUncheckedCreateWithoutBrowserActionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutBrowserActionsInput
+    upsert?: UserUpsertWithoutBrowserActionsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutBrowserActionsInput, UserUpdateWithoutBrowserActionsInput>, UserUncheckedUpdateWithoutBrowserActionsInput>
+  }
+
+  export type ConversationUpdateOneWithoutBrowserActionsNestedInput = {
+    create?: XOR<ConversationCreateWithoutBrowserActionsInput, ConversationUncheckedCreateWithoutBrowserActionsInput>
+    connectOrCreate?: ConversationCreateOrConnectWithoutBrowserActionsInput
+    upsert?: ConversationUpsertWithoutBrowserActionsInput
+    disconnect?: ConversationWhereInput | boolean
+    delete?: ConversationWhereInput | boolean
+    connect?: ConversationWhereUniqueInput
+    update?: XOR<XOR<ConversationUpdateToOneWithWhereWithoutBrowserActionsInput, ConversationUpdateWithoutBrowserActionsInput>, ConversationUncheckedUpdateWithoutBrowserActionsInput>
+  }
+
   export type UserCreateNestedOneWithoutSessionsInput = {
     create?: XOR<UserCreateWithoutSessionsInput, UserUncheckedCreateWithoutSessionsInput>
     connectOrCreate?: UserCreateOrConnectWithoutSessionsInput
     connect?: UserWhereUniqueInput
-  }
-
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
   }
 
   export type UserUpdateOneRequiredWithoutSessionsNestedInput = {
@@ -8204,11 +10339,25 @@ export namespace Prisma {
     connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
   }
 
+  export type BrowserActionCreateNestedManyWithoutConversationInput = {
+    create?: XOR<BrowserActionCreateWithoutConversationInput, BrowserActionUncheckedCreateWithoutConversationInput> | BrowserActionCreateWithoutConversationInput[] | BrowserActionUncheckedCreateWithoutConversationInput[]
+    connectOrCreate?: BrowserActionCreateOrConnectWithoutConversationInput | BrowserActionCreateOrConnectWithoutConversationInput[]
+    createMany?: BrowserActionCreateManyConversationInputEnvelope
+    connect?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
+  }
+
   export type MessageUncheckedCreateNestedManyWithoutConversationInput = {
     create?: XOR<MessageCreateWithoutConversationInput, MessageUncheckedCreateWithoutConversationInput> | MessageCreateWithoutConversationInput[] | MessageUncheckedCreateWithoutConversationInput[]
     connectOrCreate?: MessageCreateOrConnectWithoutConversationInput | MessageCreateOrConnectWithoutConversationInput[]
     createMany?: MessageCreateManyConversationInputEnvelope
     connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+  }
+
+  export type BrowserActionUncheckedCreateNestedManyWithoutConversationInput = {
+    create?: XOR<BrowserActionCreateWithoutConversationInput, BrowserActionUncheckedCreateWithoutConversationInput> | BrowserActionCreateWithoutConversationInput[] | BrowserActionUncheckedCreateWithoutConversationInput[]
+    connectOrCreate?: BrowserActionCreateOrConnectWithoutConversationInput | BrowserActionCreateOrConnectWithoutConversationInput[]
+    createMany?: BrowserActionCreateManyConversationInputEnvelope
+    connect?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
   }
 
   export type UserUpdateOneRequiredWithoutConversationsNestedInput = {
@@ -8233,6 +10382,20 @@ export namespace Prisma {
     deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
   }
 
+  export type BrowserActionUpdateManyWithoutConversationNestedInput = {
+    create?: XOR<BrowserActionCreateWithoutConversationInput, BrowserActionUncheckedCreateWithoutConversationInput> | BrowserActionCreateWithoutConversationInput[] | BrowserActionUncheckedCreateWithoutConversationInput[]
+    connectOrCreate?: BrowserActionCreateOrConnectWithoutConversationInput | BrowserActionCreateOrConnectWithoutConversationInput[]
+    upsert?: BrowserActionUpsertWithWhereUniqueWithoutConversationInput | BrowserActionUpsertWithWhereUniqueWithoutConversationInput[]
+    createMany?: BrowserActionCreateManyConversationInputEnvelope
+    set?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
+    disconnect?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
+    delete?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
+    connect?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
+    update?: BrowserActionUpdateWithWhereUniqueWithoutConversationInput | BrowserActionUpdateWithWhereUniqueWithoutConversationInput[]
+    updateMany?: BrowserActionUpdateManyWithWhereWithoutConversationInput | BrowserActionUpdateManyWithWhereWithoutConversationInput[]
+    deleteMany?: BrowserActionScalarWhereInput | BrowserActionScalarWhereInput[]
+  }
+
   export type MessageUncheckedUpdateManyWithoutConversationNestedInput = {
     create?: XOR<MessageCreateWithoutConversationInput, MessageUncheckedCreateWithoutConversationInput> | MessageCreateWithoutConversationInput[] | MessageUncheckedCreateWithoutConversationInput[]
     connectOrCreate?: MessageCreateOrConnectWithoutConversationInput | MessageCreateOrConnectWithoutConversationInput[]
@@ -8245,6 +10408,20 @@ export namespace Prisma {
     update?: MessageUpdateWithWhereUniqueWithoutConversationInput | MessageUpdateWithWhereUniqueWithoutConversationInput[]
     updateMany?: MessageUpdateManyWithWhereWithoutConversationInput | MessageUpdateManyWithWhereWithoutConversationInput[]
     deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
+  }
+
+  export type BrowserActionUncheckedUpdateManyWithoutConversationNestedInput = {
+    create?: XOR<BrowserActionCreateWithoutConversationInput, BrowserActionUncheckedCreateWithoutConversationInput> | BrowserActionCreateWithoutConversationInput[] | BrowserActionUncheckedCreateWithoutConversationInput[]
+    connectOrCreate?: BrowserActionCreateOrConnectWithoutConversationInput | BrowserActionCreateOrConnectWithoutConversationInput[]
+    upsert?: BrowserActionUpsertWithWhereUniqueWithoutConversationInput | BrowserActionUpsertWithWhereUniqueWithoutConversationInput[]
+    createMany?: BrowserActionCreateManyConversationInputEnvelope
+    set?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
+    disconnect?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
+    delete?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
+    connect?: BrowserActionWhereUniqueInput | BrowserActionWhereUniqueInput[]
+    update?: BrowserActionUpdateWithWhereUniqueWithoutConversationInput | BrowserActionUpdateWithWhereUniqueWithoutConversationInput[]
+    updateMany?: BrowserActionUpdateManyWithWhereWithoutConversationInput | BrowserActionUpdateManyWithWhereWithoutConversationInput[]
+    deleteMany?: BrowserActionScalarWhereInput | BrowserActionScalarWhereInput[]
   }
 
   export type ConversationCreateNestedOneWithoutMessagesInput = {
@@ -8312,6 +10489,28 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type NestedDateTimeFilter<$PrismaModel = never> = {
@@ -8395,29 +10594,20 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -8432,6 +10622,84 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedDateTimeNullableFilter<$PrismaModel>
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedUuidNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedUuidNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedUuidNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedUuidNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+  export type NestedJsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
   export type NestedJsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -8489,6 +10757,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     messages?: MessageCreateNestedManyWithoutConversationInput
+    browserActions?: BrowserActionCreateNestedManyWithoutConversationInput
   }
 
   export type ConversationUncheckedCreateWithoutUserInput = {
@@ -8497,6 +10766,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     messages?: MessageUncheckedCreateNestedManyWithoutConversationInput
+    browserActions?: BrowserActionUncheckedCreateNestedManyWithoutConversationInput
   }
 
   export type ConversationCreateOrConnectWithoutUserInput = {
@@ -8536,6 +10806,48 @@ export namespace Prisma {
 
   export type MemoryCreateManyUserInputEnvelope = {
     data: MemoryCreateManyUserInput | MemoryCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type BrowserActionCreateWithoutUserInput = {
+    id?: string
+    actionId: string
+    deviceId?: string | null
+    tabId?: number | null
+    actionType: string
+    riskTier: string
+    payloadSummary: JsonNullValueInput | InputJsonValue
+    status: string
+    failureReason?: string | null
+    expiresAt: Date | string
+    createdAt?: Date | string
+    completedAt?: Date | string | null
+    conversation?: ConversationCreateNestedOneWithoutBrowserActionsInput
+  }
+
+  export type BrowserActionUncheckedCreateWithoutUserInput = {
+    id?: string
+    actionId: string
+    deviceId?: string | null
+    tabId?: number | null
+    conversationId?: string | null
+    actionType: string
+    riskTier: string
+    payloadSummary: JsonNullValueInput | InputJsonValue
+    status: string
+    failureReason?: string | null
+    expiresAt: Date | string
+    createdAt?: Date | string
+    completedAt?: Date | string | null
+  }
+
+  export type BrowserActionCreateOrConnectWithoutUserInput = {
+    where: BrowserActionWhereUniqueInput
+    create: XOR<BrowserActionCreateWithoutUserInput, BrowserActionUncheckedCreateWithoutUserInput>
+  }
+
+  export type BrowserActionCreateManyUserInputEnvelope = {
+    data: BrowserActionCreateManyUserInput | BrowserActionCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -8624,16 +10936,193 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Memory"> | Date | string
   }
 
+  export type BrowserActionUpsertWithWhereUniqueWithoutUserInput = {
+    where: BrowserActionWhereUniqueInput
+    update: XOR<BrowserActionUpdateWithoutUserInput, BrowserActionUncheckedUpdateWithoutUserInput>
+    create: XOR<BrowserActionCreateWithoutUserInput, BrowserActionUncheckedCreateWithoutUserInput>
+  }
+
+  export type BrowserActionUpdateWithWhereUniqueWithoutUserInput = {
+    where: BrowserActionWhereUniqueInput
+    data: XOR<BrowserActionUpdateWithoutUserInput, BrowserActionUncheckedUpdateWithoutUserInput>
+  }
+
+  export type BrowserActionUpdateManyWithWhereWithoutUserInput = {
+    where: BrowserActionScalarWhereInput
+    data: XOR<BrowserActionUpdateManyMutationInput, BrowserActionUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type BrowserActionScalarWhereInput = {
+    AND?: BrowserActionScalarWhereInput | BrowserActionScalarWhereInput[]
+    OR?: BrowserActionScalarWhereInput[]
+    NOT?: BrowserActionScalarWhereInput | BrowserActionScalarWhereInput[]
+    id?: UuidFilter<"BrowserAction"> | string
+    actionId?: StringFilter<"BrowserAction"> | string
+    userId?: UuidFilter<"BrowserAction"> | string
+    deviceId?: StringNullableFilter<"BrowserAction"> | string | null
+    tabId?: IntNullableFilter<"BrowserAction"> | number | null
+    conversationId?: UuidNullableFilter<"BrowserAction"> | string | null
+    actionType?: StringFilter<"BrowserAction"> | string
+    riskTier?: StringFilter<"BrowserAction"> | string
+    payloadSummary?: JsonFilter<"BrowserAction">
+    status?: StringFilter<"BrowserAction"> | string
+    failureReason?: StringNullableFilter<"BrowserAction"> | string | null
+    expiresAt?: DateTimeFilter<"BrowserAction"> | Date | string
+    createdAt?: DateTimeFilter<"BrowserAction"> | Date | string
+    completedAt?: DateTimeNullableFilter<"BrowserAction"> | Date | string | null
+  }
+
+  export type UserCreateWithoutBrowserActionsInput = {
+    id?: string
+    email: string
+    displayName?: string | null
+    voicePreference?: string
+    passwordHash: string
+    lastLatitude?: number | null
+    lastLongitude?: number | null
+    lastLocationLabel?: string | null
+    locationUpdatedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    conversations?: ConversationCreateNestedManyWithoutUserInput
+    memories?: MemoryCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutBrowserActionsInput = {
+    id?: string
+    email: string
+    displayName?: string | null
+    voicePreference?: string
+    passwordHash: string
+    lastLatitude?: number | null
+    lastLongitude?: number | null
+    lastLocationLabel?: string | null
+    locationUpdatedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    conversations?: ConversationUncheckedCreateNestedManyWithoutUserInput
+    memories?: MemoryUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutBrowserActionsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutBrowserActionsInput, UserUncheckedCreateWithoutBrowserActionsInput>
+  }
+
+  export type ConversationCreateWithoutBrowserActionsInput = {
+    id?: string
+    title?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutConversationsInput
+    messages?: MessageCreateNestedManyWithoutConversationInput
+  }
+
+  export type ConversationUncheckedCreateWithoutBrowserActionsInput = {
+    id?: string
+    userId: string
+    title?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    messages?: MessageUncheckedCreateNestedManyWithoutConversationInput
+  }
+
+  export type ConversationCreateOrConnectWithoutBrowserActionsInput = {
+    where: ConversationWhereUniqueInput
+    create: XOR<ConversationCreateWithoutBrowserActionsInput, ConversationUncheckedCreateWithoutBrowserActionsInput>
+  }
+
+  export type UserUpsertWithoutBrowserActionsInput = {
+    update: XOR<UserUpdateWithoutBrowserActionsInput, UserUncheckedUpdateWithoutBrowserActionsInput>
+    create: XOR<UserCreateWithoutBrowserActionsInput, UserUncheckedCreateWithoutBrowserActionsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutBrowserActionsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutBrowserActionsInput, UserUncheckedUpdateWithoutBrowserActionsInput>
+  }
+
+  export type UserUpdateWithoutBrowserActionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    voicePreference?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    lastLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLocationLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    locationUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    conversations?: ConversationUpdateManyWithoutUserNestedInput
+    memories?: MemoryUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutBrowserActionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    voicePreference?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    lastLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLocationLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    locationUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    conversations?: ConversationUncheckedUpdateManyWithoutUserNestedInput
+    memories?: MemoryUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type ConversationUpsertWithoutBrowserActionsInput = {
+    update: XOR<ConversationUpdateWithoutBrowserActionsInput, ConversationUncheckedUpdateWithoutBrowserActionsInput>
+    create: XOR<ConversationCreateWithoutBrowserActionsInput, ConversationUncheckedCreateWithoutBrowserActionsInput>
+    where?: ConversationWhereInput
+  }
+
+  export type ConversationUpdateToOneWithWhereWithoutBrowserActionsInput = {
+    where?: ConversationWhereInput
+    data: XOR<ConversationUpdateWithoutBrowserActionsInput, ConversationUncheckedUpdateWithoutBrowserActionsInput>
+  }
+
+  export type ConversationUpdateWithoutBrowserActionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutConversationsNestedInput
+    messages?: MessageUpdateManyWithoutConversationNestedInput
+  }
+
+  export type ConversationUncheckedUpdateWithoutBrowserActionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    messages?: MessageUncheckedUpdateManyWithoutConversationNestedInput
+  }
+
   export type UserCreateWithoutSessionsInput = {
     id?: string
     email: string
     displayName?: string | null
     voicePreference?: string
     passwordHash: string
+    lastLatitude?: number | null
+    lastLongitude?: number | null
+    lastLocationLabel?: string | null
+    locationUpdatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     conversations?: ConversationCreateNestedManyWithoutUserInput
     memories?: MemoryCreateNestedManyWithoutUserInput
+    browserActions?: BrowserActionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -8642,10 +11131,15 @@ export namespace Prisma {
     displayName?: string | null
     voicePreference?: string
     passwordHash: string
+    lastLatitude?: number | null
+    lastLongitude?: number | null
+    lastLocationLabel?: string | null
+    locationUpdatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     conversations?: ConversationUncheckedCreateNestedManyWithoutUserInput
     memories?: MemoryUncheckedCreateNestedManyWithoutUserInput
+    browserActions?: BrowserActionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -8670,10 +11164,15 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
+    lastLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLocationLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    locationUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     conversations?: ConversationUpdateManyWithoutUserNestedInput
     memories?: MemoryUpdateManyWithoutUserNestedInput
+    browserActions?: BrowserActionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -8682,10 +11181,15 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
+    lastLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLocationLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    locationUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     conversations?: ConversationUncheckedUpdateManyWithoutUserNestedInput
     memories?: MemoryUncheckedUpdateManyWithoutUserNestedInput
+    browserActions?: BrowserActionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutConversationsInput = {
@@ -8694,10 +11198,15 @@ export namespace Prisma {
     displayName?: string | null
     voicePreference?: string
     passwordHash: string
+    lastLatitude?: number | null
+    lastLongitude?: number | null
+    lastLocationLabel?: string | null
+    locationUpdatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     sessions?: SessionCreateNestedManyWithoutUserInput
     memories?: MemoryCreateNestedManyWithoutUserInput
+    browserActions?: BrowserActionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutConversationsInput = {
@@ -8706,10 +11215,15 @@ export namespace Prisma {
     displayName?: string | null
     voicePreference?: string
     passwordHash: string
+    lastLatitude?: number | null
+    lastLongitude?: number | null
+    lastLocationLabel?: string | null
+    locationUpdatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     memories?: MemoryUncheckedCreateNestedManyWithoutUserInput
+    browserActions?: BrowserActionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutConversationsInput = {
@@ -8741,6 +11255,48 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type BrowserActionCreateWithoutConversationInput = {
+    id?: string
+    actionId: string
+    deviceId?: string | null
+    tabId?: number | null
+    actionType: string
+    riskTier: string
+    payloadSummary: JsonNullValueInput | InputJsonValue
+    status: string
+    failureReason?: string | null
+    expiresAt: Date | string
+    createdAt?: Date | string
+    completedAt?: Date | string | null
+    user: UserCreateNestedOneWithoutBrowserActionsInput
+  }
+
+  export type BrowserActionUncheckedCreateWithoutConversationInput = {
+    id?: string
+    actionId: string
+    userId: string
+    deviceId?: string | null
+    tabId?: number | null
+    actionType: string
+    riskTier: string
+    payloadSummary: JsonNullValueInput | InputJsonValue
+    status: string
+    failureReason?: string | null
+    expiresAt: Date | string
+    createdAt?: Date | string
+    completedAt?: Date | string | null
+  }
+
+  export type BrowserActionCreateOrConnectWithoutConversationInput = {
+    where: BrowserActionWhereUniqueInput
+    create: XOR<BrowserActionCreateWithoutConversationInput, BrowserActionUncheckedCreateWithoutConversationInput>
+  }
+
+  export type BrowserActionCreateManyConversationInputEnvelope = {
+    data: BrowserActionCreateManyConversationInput | BrowserActionCreateManyConversationInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutConversationsInput = {
     update: XOR<UserUpdateWithoutConversationsInput, UserUncheckedUpdateWithoutConversationsInput>
     create: XOR<UserCreateWithoutConversationsInput, UserUncheckedCreateWithoutConversationsInput>
@@ -8758,10 +11314,15 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
+    lastLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLocationLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    locationUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUpdateManyWithoutUserNestedInput
     memories?: MemoryUpdateManyWithoutUserNestedInput
+    browserActions?: BrowserActionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutConversationsInput = {
@@ -8770,10 +11331,15 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
+    lastLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLocationLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    locationUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     memories?: MemoryUncheckedUpdateManyWithoutUserNestedInput
+    browserActions?: BrowserActionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type MessageUpsertWithWhereUniqueWithoutConversationInput = {
@@ -8803,12 +11369,29 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Message"> | Date | string
   }
 
+  export type BrowserActionUpsertWithWhereUniqueWithoutConversationInput = {
+    where: BrowserActionWhereUniqueInput
+    update: XOR<BrowserActionUpdateWithoutConversationInput, BrowserActionUncheckedUpdateWithoutConversationInput>
+    create: XOR<BrowserActionCreateWithoutConversationInput, BrowserActionUncheckedCreateWithoutConversationInput>
+  }
+
+  export type BrowserActionUpdateWithWhereUniqueWithoutConversationInput = {
+    where: BrowserActionWhereUniqueInput
+    data: XOR<BrowserActionUpdateWithoutConversationInput, BrowserActionUncheckedUpdateWithoutConversationInput>
+  }
+
+  export type BrowserActionUpdateManyWithWhereWithoutConversationInput = {
+    where: BrowserActionScalarWhereInput
+    data: XOR<BrowserActionUpdateManyMutationInput, BrowserActionUncheckedUpdateManyWithoutConversationInput>
+  }
+
   export type ConversationCreateWithoutMessagesInput = {
     id?: string
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutConversationsInput
+    browserActions?: BrowserActionCreateNestedManyWithoutConversationInput
   }
 
   export type ConversationUncheckedCreateWithoutMessagesInput = {
@@ -8817,6 +11400,7 @@ export namespace Prisma {
     title?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    browserActions?: BrowserActionUncheckedCreateNestedManyWithoutConversationInput
   }
 
   export type ConversationCreateOrConnectWithoutMessagesInput = {
@@ -8841,6 +11425,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutConversationsNestedInput
+    browserActions?: BrowserActionUpdateManyWithoutConversationNestedInput
   }
 
   export type ConversationUncheckedUpdateWithoutMessagesInput = {
@@ -8849,6 +11434,7 @@ export namespace Prisma {
     title?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    browserActions?: BrowserActionUncheckedUpdateManyWithoutConversationNestedInput
   }
 
   export type UserCreateWithoutMemoriesInput = {
@@ -8857,10 +11443,15 @@ export namespace Prisma {
     displayName?: string | null
     voicePreference?: string
     passwordHash: string
+    lastLatitude?: number | null
+    lastLongitude?: number | null
+    lastLocationLabel?: string | null
+    locationUpdatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     sessions?: SessionCreateNestedManyWithoutUserInput
     conversations?: ConversationCreateNestedManyWithoutUserInput
+    browserActions?: BrowserActionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutMemoriesInput = {
@@ -8869,10 +11460,15 @@ export namespace Prisma {
     displayName?: string | null
     voicePreference?: string
     passwordHash: string
+    lastLatitude?: number | null
+    lastLongitude?: number | null
+    lastLocationLabel?: string | null
+    locationUpdatedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     conversations?: ConversationUncheckedCreateNestedManyWithoutUserInput
+    browserActions?: BrowserActionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutMemoriesInput = {
@@ -8897,10 +11493,15 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
+    lastLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLocationLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    locationUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUpdateManyWithoutUserNestedInput
     conversations?: ConversationUpdateManyWithoutUserNestedInput
+    browserActions?: BrowserActionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutMemoriesInput = {
@@ -8909,10 +11510,15 @@ export namespace Prisma {
     displayName?: NullableStringFieldUpdateOperationsInput | string | null
     voicePreference?: StringFieldUpdateOperationsInput | string
     passwordHash?: StringFieldUpdateOperationsInput | string
+    lastLatitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLongitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    lastLocationLabel?: NullableStringFieldUpdateOperationsInput | string | null
+    locationUpdatedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     conversations?: ConversationUncheckedUpdateManyWithoutUserNestedInput
+    browserActions?: BrowserActionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type SessionCreateManyUserInput = {
@@ -8938,6 +11544,22 @@ export namespace Prisma {
     vectorId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type BrowserActionCreateManyUserInput = {
+    id?: string
+    actionId: string
+    deviceId?: string | null
+    tabId?: number | null
+    conversationId?: string | null
+    actionType: string
+    riskTier: string
+    payloadSummary: JsonNullValueInput | InputJsonValue
+    status: string
+    failureReason?: string | null
+    expiresAt: Date | string
+    createdAt?: Date | string
+    completedAt?: Date | string | null
   }
 
   export type SessionUpdateWithoutUserInput = {
@@ -8970,6 +11592,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     messages?: MessageUpdateManyWithoutConversationNestedInput
+    browserActions?: BrowserActionUpdateManyWithoutConversationNestedInput
   }
 
   export type ConversationUncheckedUpdateWithoutUserInput = {
@@ -8978,6 +11601,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     messages?: MessageUncheckedUpdateManyWithoutConversationNestedInput
+    browserActions?: BrowserActionUncheckedUpdateManyWithoutConversationNestedInput
   }
 
   export type ConversationUncheckedUpdateManyWithoutUserInput = {
@@ -9017,11 +11641,75 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type BrowserActionUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    actionId?: StringFieldUpdateOperationsInput | string
+    deviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    tabId?: NullableIntFieldUpdateOperationsInput | number | null
+    actionType?: StringFieldUpdateOperationsInput | string
+    riskTier?: StringFieldUpdateOperationsInput | string
+    payloadSummary?: JsonNullValueInput | InputJsonValue
+    status?: StringFieldUpdateOperationsInput | string
+    failureReason?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    conversation?: ConversationUpdateOneWithoutBrowserActionsNestedInput
+  }
+
+  export type BrowserActionUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    actionId?: StringFieldUpdateOperationsInput | string
+    deviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    tabId?: NullableIntFieldUpdateOperationsInput | number | null
+    conversationId?: NullableStringFieldUpdateOperationsInput | string | null
+    actionType?: StringFieldUpdateOperationsInput | string
+    riskTier?: StringFieldUpdateOperationsInput | string
+    payloadSummary?: JsonNullValueInput | InputJsonValue
+    status?: StringFieldUpdateOperationsInput | string
+    failureReason?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type BrowserActionUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    actionId?: StringFieldUpdateOperationsInput | string
+    deviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    tabId?: NullableIntFieldUpdateOperationsInput | number | null
+    conversationId?: NullableStringFieldUpdateOperationsInput | string | null
+    actionType?: StringFieldUpdateOperationsInput | string
+    riskTier?: StringFieldUpdateOperationsInput | string
+    payloadSummary?: JsonNullValueInput | InputJsonValue
+    status?: StringFieldUpdateOperationsInput | string
+    failureReason?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type MessageCreateManyConversationInput = {
     id?: string
     content: string
     role: string
     createdAt?: Date | string
+  }
+
+  export type BrowserActionCreateManyConversationInput = {
+    id?: string
+    actionId: string
+    userId: string
+    deviceId?: string | null
+    tabId?: number | null
+    actionType: string
+    riskTier: string
+    payloadSummary: JsonNullValueInput | InputJsonValue
+    status: string
+    failureReason?: string | null
+    expiresAt: Date | string
+    createdAt?: Date | string
+    completedAt?: Date | string | null
   }
 
   export type MessageUpdateWithoutConversationInput = {
@@ -9043,6 +11731,54 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BrowserActionUpdateWithoutConversationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    actionId?: StringFieldUpdateOperationsInput | string
+    deviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    tabId?: NullableIntFieldUpdateOperationsInput | number | null
+    actionType?: StringFieldUpdateOperationsInput | string
+    riskTier?: StringFieldUpdateOperationsInput | string
+    payloadSummary?: JsonNullValueInput | InputJsonValue
+    status?: StringFieldUpdateOperationsInput | string
+    failureReason?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    user?: UserUpdateOneRequiredWithoutBrowserActionsNestedInput
+  }
+
+  export type BrowserActionUncheckedUpdateWithoutConversationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    actionId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    deviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    tabId?: NullableIntFieldUpdateOperationsInput | number | null
+    actionType?: StringFieldUpdateOperationsInput | string
+    riskTier?: StringFieldUpdateOperationsInput | string
+    payloadSummary?: JsonNullValueInput | InputJsonValue
+    status?: StringFieldUpdateOperationsInput | string
+    failureReason?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type BrowserActionUncheckedUpdateManyWithoutConversationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    actionId?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    deviceId?: NullableStringFieldUpdateOperationsInput | string | null
+    tabId?: NullableIntFieldUpdateOperationsInput | number | null
+    actionType?: StringFieldUpdateOperationsInput | string
+    riskTier?: StringFieldUpdateOperationsInput | string
+    payloadSummary?: JsonNullValueInput | InputJsonValue
+    status?: StringFieldUpdateOperationsInput | string
+    failureReason?: NullableStringFieldUpdateOperationsInput | string | null
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
 

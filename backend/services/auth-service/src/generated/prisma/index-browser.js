@@ -126,8 +126,29 @@ exports.Prisma.UserScalarFieldEnum = {
   displayName: 'displayName',
   voicePreference: 'voicePreference',
   passwordHash: 'passwordHash',
+  lastLatitude: 'lastLatitude',
+  lastLongitude: 'lastLongitude',
+  lastLocationLabel: 'lastLocationLabel',
+  locationUpdatedAt: 'locationUpdatedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.BrowserActionScalarFieldEnum = {
+  id: 'id',
+  actionId: 'actionId',
+  userId: 'userId',
+  deviceId: 'deviceId',
+  tabId: 'tabId',
+  conversationId: 'conversationId',
+  actionType: 'actionType',
+  riskTier: 'riskTier',
+  payloadSummary: 'payloadSummary',
+  status: 'status',
+  failureReason: 'failureReason',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  completedAt: 'completedAt'
 };
 
 exports.Prisma.SessionScalarFieldEnum = {
@@ -171,6 +192,10 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
+};
+
 exports.Prisma.NullableJsonNullValueInput = {
   DbNull: Prisma.DbNull,
   JsonNull: Prisma.JsonNull
@@ -195,6 +220,7 @@ exports.Prisma.JsonNullValueFilter = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  BrowserAction: 'BrowserAction',
   Session: 'Session',
   Conversation: 'Conversation',
   Message: 'Message',

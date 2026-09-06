@@ -46,8 +46,8 @@ export class LangGraphAgent {
   /**
    * Main entry point to process a voice/text command with multi-step reasoning and streaming output.
    */
-  async *processCommand({ conversationId, userId, transcript, browserContext, memoryStore, history = [] }) {
-    const state = new AgentState({ conversationId, userId, transcript, browserContext, history });
+  async *processCommand({ conversationId, userId, transcript, browserContext, userLocation, memoryStore, history = [] }) {
+    const state = new AgentState({ conversationId, userId, transcript, browserContext, userLocation, history });
     const startTime = Date.now();
     let chunkIndex = 0;
 
@@ -118,7 +118,7 @@ export class LangGraphAgent {
             const toolResult = await this.toolRegistry.execute(
               funcName,
               funcArgs,
-              { memoryStore, userId: state.userId, conversationId: state.conversationId }
+              { memoryStore, userId: state.userId, conversationId: state.conversationId, userLocation: state.userLocation, browserContext: state.browserContext, deviceId: state.browserContext?.deviceId, tabId: state.browserContext?.tabId }
             );
 
             state.recordToolUsage(funcName, funcArgs, toolResult);

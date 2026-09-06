@@ -9,12 +9,13 @@ function extractToken(req) {
     if (authHeader.startsWith('Bearer ')) {
         return authHeader.slice(7);
     }
-    return req.query?.accessToken || req.body?.accessToken || '';
+    return req.body?.accessToken || '';
 }
 
 export function createAuthMiddleware({ authClient }) {
     return async function authMiddleware(req, res, next) {
         const token = extractToken(req);
+        let jwtValidationStartTime = Date.now();
 
         if (!token) {
             return res.status(401).json({
@@ -28,8 +29,6 @@ export function createAuthMiddleware({ authClient }) {
 
         try {
             // Record when JWT validation starts
-            const jwtValidationStartTime = Date.now();
-            
             const response = await unary(authClient, 'VerifyToken', {
                 context: createRequestContext(req),
                 accessToken: token

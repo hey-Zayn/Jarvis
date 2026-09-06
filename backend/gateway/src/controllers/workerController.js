@@ -10,7 +10,7 @@ export function createWorkerController({ workerClient }) {
                     idempotencyKey: req.body.idempotencyKey || '',
                     actionType: req.body.actionType || '',
                     conversationId: req.body.conversationId || '',
-                    payloadJson: JSON.stringify(req.body.payload || {})
+                    payloadJson: JSON.stringify({ ...(req.body.payload || {}), userId: req.user.userId })
                 });
                 res.json(response);
             } catch (error) {
@@ -25,7 +25,7 @@ export function createWorkerController({ workerClient }) {
                     idempotencyKey: req.body.idempotencyKey || '',
                     conversationId: req.body.conversationId || '',
                     turnId: req.body.turnId || '',
-                    payloadJson: JSON.stringify(req.body.payload || {})
+                    payloadJson: JSON.stringify({ ...(req.body.payload || {}), userId: req.user.userId })
                 });
                 res.json(response);
             } catch (error) {

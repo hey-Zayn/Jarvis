@@ -2,7 +2,9 @@ import { timeTool } from './timeTool.js';
 import { calcTool } from './calcTool.js';
 import { weatherTool } from './weatherTool.js';
 import { searchTool } from './searchTool.js';
+import { locationTool, searchNearbyTool } from './locationTool.js';
 import { memoryAccessTool, memoryStoreTool } from './memoryTool.js';
+import { browserTools } from './browserTools.js';
 
 export class ToolRegistry {
   constructor() {
@@ -15,8 +17,11 @@ export class ToolRegistry {
     this.register(calcTool);
     this.register(weatherTool);
     this.register(searchTool);
+    this.register(locationTool);
+    this.register(searchNearbyTool);
     this.register(memoryAccessTool);
     this.register(memoryStoreTool);
+    browserTools.forEach((tool) => this.register(tool));
   }
 
   register(tool) {

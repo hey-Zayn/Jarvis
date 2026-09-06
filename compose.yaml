@@ -51,7 +51,6 @@ services:
     volumes:
       - ./backend/gateway:/app
       - ./shared:/shared:ro
-      - /app/node_modules
     depends_on:
       - auth-service
       - agent-service

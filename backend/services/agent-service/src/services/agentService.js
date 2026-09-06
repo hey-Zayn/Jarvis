@@ -115,12 +115,30 @@ export function createAgentService() {
                 hasTranscript: !!transcript
             });
 
+            let userLocation = null;
+            try {
+                const user = await prisma.user.findUnique({
+                    where: { id: userId },
+                    select: { lastLatitude: true, lastLongitude: true, lastLocationLabel: true }
+                });
+                if (user && (user.lastLatitude != null || user.lastLocationLabel)) {
+                    userLocation = {
+                        latitude: user.lastLatitude,
+                        longitude: user.lastLongitude,
+                        label: user.lastLocationLabel || ''
+                    };
+                }
+            } catch (err) {
+                // Non-blocking location retrieval
+            }
+
             try {
                 const stream = agent.processCommand({
                     conversationId,
                     userId,
                     transcript,
                     browserContext,
+                    userLocation,
                     memoryStore,
                     history
                 });
