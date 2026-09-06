@@ -5,7 +5,7 @@ export function createAuthController({ authService = createAuthService() } = {})
         try { callback(null, await authService[method](call.request)); }
         catch (error) { callback(null, { status: { ok: false, message: 'Authentication service unavailable', error: { code: 'INTERNAL', message: error.message } } }); }
     };
-    return { Register: callRpc('register'), Login: callRpc('login'), VerifyToken: callRpc('verifyToken'), RefreshToken: callRpc('refreshToken'), GetProfile: callRpc('getProfile'), UpdateProfile: callRpc('updateProfile') };
+    return { Register: callRpc('register'), Login: callRpc('login'), VerifyToken: callRpc('verifyToken'), RefreshToken: callRpc('refreshToken'), GetProfile: callRpc('getProfile'), UpdateProfile: callRpc('updateProfile'), UpdateLocation: callRpc('updateLocation') };
 }
 
 export function createHttpAuthController({ authService = createAuthService() } = {}) {

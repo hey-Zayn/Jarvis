@@ -105,7 +105,7 @@ export function createWorkerJobService() {
                 turnId: turnId || parsedPayload.turnId || `turn-${Date.now()}`,
                 transcript: transcript || parsedPayload.transcript || '',
                 agentResponse: agentResponse || parsedPayload.agentResponse || '',
-                userId: userId || parsedPayload.userId || 'anonymous-user',
+                userId: userId || '',
                 timestamp: timestamp || parsedPayload.timestamp || Date.now()
             };
 

@@ -12,6 +12,7 @@ let isTtsEnabled = true;
 let recognition = null;
 let micStream = null;
 let lastResponseText = '';
+let currentConversationId = null;
 
 // ─── Token & View Helpers ───────────────────────────────────────────────────
 
@@ -168,9 +169,11 @@ function initAppView() {
       // Send message to content script
       chrome.tabs.sendMessage(tab.id, { type: 'GET_TAB_CONTEXT' }, (response) => {
         if (chrome.runtime.lastError || !response?.success) {
-          currentTabContext = { url: tab.url, title: tab.title };
+          currentTabContext = { url: tab.url, title: tab.title, tabId: tab.id, deviceId: `extension-${chrome.runtime.id}` };
         } else if (response && response.context) {
           currentTabContext = response.context;
+          currentTabContext.tabId = tab.id;
+          currentTabContext.deviceId = `extension-${chrome.runtime.id}`;
           if (currentTabContext.selectedText) {
             selectionBadge.style.display = 'inline-block';
             chipSelection.style.display = 'inline-flex';
@@ -219,11 +222,13 @@ function initAppView() {
     }
   };
 
-  // 8. Voice STT Setup
+  // 8. Voice STT Setup with Continuous Listening & Silence Debounce
+  let silenceTimer = null;
+  let accumulatedTranscript = '';
   const SpeechRecognitionClass = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (SpeechRecognitionClass) {
     recognition = new SpeechRecognitionClass();
-    recognition.continuous = false;
+    recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = 'en-US';
 
@@ -237,33 +242,67 @@ function initAppView() {
           interim += event.results[i][0].transcript;
         }
       }
-      const text = final || interim;
-      if (text) commandInput.value = text;
-      if (final.trim()) {
-        stopRecording();
-        sendCommand(final.trim());
-        commandInput.value = '';
+      const combined = (final + ' ' + interim).trim();
+      if (combined) {
+        // Universal STOP voice command check
+        if (/\b(?:stop|cancel|halt|quiet|shut\s*up)(?:\s+jarvis)?\b/i.test(combined)) {
+          if (silenceTimer) clearTimeout(silenceTimer);
+          accumulatedTranscript = '';
+          commandInput.value = '';
+          stopRecording();
+          stopSpeaking();
+          setAssistantStatus('⏹ Stopped');
+          return;
+        }
+
+        accumulatedTranscript = combined;
+        commandInput.value = combined;
+
+        if (silenceTimer) clearTimeout(silenceTimer);
+        silenceTimer = setTimeout(() => {
+          if (accumulatedTranscript.trim()) {
+            const captured = accumulatedTranscript.trim();
+            accumulatedTranscript = '';
+            stopRecording();
+
+            // Wake word filter
+            const wakeWordPattern = /\b(?:hey\s+)?jarvis\b/i;
+            let toExecute = captured;
+            if (wakeWordPattern.test(captured)) {
+              toExecute = captured.replace(/^.*?\b(?:hey\s+)?jarvis\b\s*[:,-]?\s*/i, '').trim();
+            }
+            if (toExecute) {
+              sendCommand(toExecute);
+            }
+            commandInput.value = '';
+          }
+        }, 1100);
       }
     };
 
     recognition.onerror = (event) => {
-      console.warn('[Extension Voice] Speech error:', event.error);
-      stopRecording();
-      if (event.error === 'not-allowed') {
-        outputStatus.textContent = 'Mic access needed (Opening helper tab)';
-        chrome.tabs.create({ url: chrome.runtime.getURL('permission.html') });
+      if (event.error !== 'no-speech' && event.error !== 'network') {
+        console.warn('[Extension Voice] Speech error:', event.error);
+        if (event.error === 'not-allowed') {
+          stopRecording();
+          outputStatus.textContent = 'Mic access needed (Opening helper tab)';
+          chrome.tabs.create({ url: chrome.runtime.getURL('permission.html') });
+        }
       }
     };
 
     recognition.onend = () => {
-      stopRecording();
+      if (isRecording) {
+        try { recognition.start(); } catch (e) {}
+      } else {
+        stopRecording();
+      }
     };
   }
 
   async function startRecording() {
     stopSpeaking();
     try {
-      // Trigger microphone permission in extension context if needed
       micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch (err) {
       console.warn('Microphone permission request failed:', err);
@@ -272,11 +311,12 @@ function initAppView() {
     isRecording = true;
     btnMic.classList.add('active');
     listeningWave.style.display = 'flex';
-    outputStatus.textContent = 'Listening...';
+    outputStatus.textContent = 'Listening (Say "JARVIS")...';
 
     if (recognition) {
       try {
         commandInput.value = '';
+        accumulatedTranscript = '';
         recognition.start();
       } catch (err) {
         console.warn('Recognition start error:', err);
@@ -285,6 +325,7 @@ function initAppView() {
   }
 
   function stopRecording() {
+    if (silenceTimer) clearTimeout(silenceTimer);
     isRecording = false;
     btnMic.classList.remove('active');
     listeningWave.style.display = 'none';
@@ -410,18 +451,7 @@ function initAppView() {
     stopRecording();
     btnCopy.style.display = 'none';
     outputArea.textContent = '';
-    const conversationId = `ext-${Date.now()}`;
-
-    // Check if command is a direct browser action (open tab, open youtube, etc.)
-    const browserActionResult = executeBrowserAction(transcript);
-    if (browserActionResult) {
-      outputStatus.textContent = 'Action Executed';
-      outputArea.textContent = browserActionResult;
-      lastResponseText = browserActionResult;
-      btnCopy.style.display = 'flex';
-      speakResponse(browserActionResult);
-      return;
-    }
+    let conversationId = currentConversationId;
 
     outputStatus.textContent = 'Jarvis is thinking...';
 
@@ -432,6 +462,28 @@ function initAppView() {
         initLoginView();
         return;
       }
+
+      if (!conversationId) {
+        const conversationResponse = await fetch(`${GATEWAY_URL}/api/agent/conversations`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ title: 'Browser Assistant' })
+        });
+        const conversationData = await conversationResponse.json();
+        conversationId = conversationData.conversationId || conversationData.conversation_id;
+        if (!conversationResponse.ok || !conversationId) throw new Error('Could not create conversation');
+        currentConversationId = conversationId;
+      }
+      // Always refresh active tab context immediately before sending
+      try {
+        const [activeTab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+        if (activeTab?.id) {
+          const tabResp = await chrome.tabs.sendMessage(activeTab.id, { type: 'GET_TAB_CONTEXT' });
+          if (tabResp?.success && tabResp.context) {
+            currentTabContext = tabResp.context;
+          }
+        }
+      } catch (e) {}
 
       const response = await fetch(`${GATEWAY_URL}/api/agent/voice-command`, {
         method: 'POST',

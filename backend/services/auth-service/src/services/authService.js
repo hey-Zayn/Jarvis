@@ -13,7 +13,17 @@ function validateCredentials(email, password) {
 }
 function normalizeVoicePreference(value) { return value === 'male' ? 'male' : 'female'; }
 function profileResponse(user) {
-    return { userId: user.id, email: user.email, displayName: user.displayName || '', voicePreference: normalizeVoicePreference(user.voicePreference), createdAtEpochMillis: String(user.createdAt.getTime()), updatedAtEpochMillis: String(user.updatedAt.getTime()) };
+    return {
+        userId: user.id,
+        email: user.email,
+        displayName: user.displayName || '',
+        voicePreference: normalizeVoicePreference(user.voicePreference),
+        latitude: user.lastLatitude ?? 0,
+        longitude: user.lastLongitude ?? 0,
+        locationLabel: user.lastLocationLabel || '',
+        createdAtEpochMillis: String(user.createdAt.getTime()),
+        updatedAtEpochMillis: String(user.updatedAt.getTime())
+    };
 }
 function sessionResponse(user, tokens) {
     return { userId: user.id, email: user.email, displayName: user.displayName || '', voicePreference: normalizeVoicePreference(user.voicePreference), accessToken: tokens.accessToken, refreshToken: tokens.refreshToken, expiresInSeconds: ACCESS_TOKEN_SECONDS };
@@ -80,6 +90,26 @@ export function createAuthService({ prisma = defaultPrisma } = {}) {
                 const updatedUser = await prisma.user.update({ where: { id: user.id }, data: { displayName: displayName.trim(), voicePreference: normalizeVoicePreference(voicePreference || user.voicePreference) } });
                 return { status: okStatus('Profile updated'), profile: profileResponse(updatedUser) };
             } catch { return { status: errorStatus('Authentication is required', 'UNAUTHENTICATED') }; }
+        },
+        async updateLocation({ accessToken, userId, latitude, longitude, locationLabel }) {
+            try {
+                const user = userId ? await prisma.user.findUnique({ where: { id: userId } }) : (await authenticatedUser(accessToken)).user;
+                if (!user) return { status: errorStatus('User not found', 'NOT_FOUND') };
+                const lat = typeof latitude === 'number' ? latitude : parseFloat(latitude);
+                const lng = typeof longitude === 'number' ? longitude : parseFloat(longitude);
+                const updatedUser = await prisma.user.update({
+                    where: { id: user.id },
+                    data: {
+                        lastLatitude: !isNaN(lat) ? lat : null,
+                        lastLongitude: !isNaN(lng) ? lng : null,
+                        lastLocationLabel: locationLabel ? String(locationLabel).trim() : null,
+                        locationUpdatedAt: new Date()
+                    }
+                });
+                return { status: okStatus('Location updated'), profile: profileResponse(updatedUser) };
+            } catch {
+                return { status: errorStatus('Authentication is required', 'UNAUTHENTICATED') };
+            }
         }
     };
 }

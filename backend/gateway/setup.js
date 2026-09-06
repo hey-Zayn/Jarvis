@@ -1,10 +1,13 @@
-// Load environment variables from .env file
 import dotenv from 'dotenv';
-console.log('setup.js: About to call dotenv.config()');
-const result = dotenv.config();
-console.log('setup.js: dotenv.config() result =', result);
-console.log('setup.js: After dotenv.config(), process.env =', process.env);
-console.log('setup.js: After dotenv.config(), PROTO_ROOT =', process.env.PROTO_ROOT);
-// Override with hardcoded value for testing
-process.env.PROTO_ROOT = '../../shared/proto';
-console.log('setup.js: After override, PROTO_ROOT =', process.env.PROTO_ROOT);
+// Load environment variables without logging secrets or overriding deployment
+// configuration. Docker uses /shared/proto, while local development resolves
+// the relative PROTO_ROOT from the gateway working directory.
+dotenv.config();
+
+export const config = {
+    port: process.env.PORT || 5000,
+    host: process.env.HOST || '0.0.0.0',
+    authServiceUrl: process.env.AUTH_SERVICE_URL || 'auth-service:4001',
+    agentServiceUrl: process.env.AGENT_SERVICE_URL || 'agent-service:4002',
+    workerServiceUrl: process.env.WORKER_SERVICE_URL || 'worker-service:4003'
+};

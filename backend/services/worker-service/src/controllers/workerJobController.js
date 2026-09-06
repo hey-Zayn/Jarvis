@@ -32,6 +32,7 @@ export function createWorkerJobController() {
                     idempotencyKey: req.idempotency_key || req.idempotencyKey,
                     conversationId: req.conversation_id || req.conversationId,
                     turnId: req.turn_id || req.turnId,
+                    userId: call.request.context?.userId || '',
                     payloadJson: req.payload_json || req.payloadJson
                 });
                 callback(null, {

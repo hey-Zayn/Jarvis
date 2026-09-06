@@ -3,11 +3,12 @@
  * Represents the complete state of the agent during reasoning and tool usage in Jarvis.
  */
 export class AgentState {
-  constructor({ conversationId, userId, transcript, browserContext, history = [] } = {}) {
+  constructor({ conversationId, userId, transcript, browserContext, userLocation, history = [] } = {}) {
     this.conversationId = conversationId || `conv-${Date.now()}`;
     this.userId = userId || 'anonymous';
     this.transcript = transcript || '';
     this.browserContext = browserContext || {};
+    this.userLocation = userLocation || null;
 
     // Messages history formatted for LLM
     this.messages = [];
@@ -91,6 +92,17 @@ export class AgentState {
       if (this.browserContext.pageText) ctxText += `\nPage snippet: ${this.browserContext.pageText.substring(0, 800)}`;
       
       msgs.push({ role: 'system', content: ctxText });
+    }
+
+    // Include user geolocation context if available
+    if (this.userLocation && (this.userLocation.label || (this.userLocation.latitude !== undefined && this.userLocation.longitude !== undefined))) {
+      let locText = `[User Geolocation Context]`;
+      if (this.userLocation.label) locText += `\nLocation: ${this.userLocation.label}`;
+      if (this.userLocation.latitude !== undefined && this.userLocation.longitude !== undefined) {
+        locText += `\nCoordinates: ${this.userLocation.latitude}, ${this.userLocation.longitude}`;
+      }
+      locText += `\nNote: Ground nearby searches, navigation, weather, and localized recommendations using this location.`;
+      msgs.push({ role: 'system', content: locText });
     }
 
     for (const msg of this.messages) {

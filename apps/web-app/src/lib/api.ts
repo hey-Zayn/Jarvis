@@ -1,7 +1,10 @@
 import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '@/store/authStore';
 
-const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || '';
+// In development, use relative URLs so Vite's proxy handles the gateway
+// connection regardless of whether the app was opened on localhost or
+// 127.0.0.1. A configured absolute URL is used for production builds.
+const API_BASE_URL = import.meta.env.DEV ? '' : (import.meta.env.VITE_API_URL || '');
 
 class ApiClient {
   private client: AxiosInstance;
@@ -137,6 +140,12 @@ class ApiClient {
     const response = await this.client.patch('/auth/profile', data, {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
+    return response.data;
+  }
+
+  async updateLocation(data: { latitude: number; longitude: number; locationLabel?: string }, accessToken?: string) {
+    const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
+    const response = await this.client.patch('/auth/location', data, { headers });
     return response.data;
   }
 

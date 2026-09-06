@@ -12,6 +12,7 @@ export function createAuthRoutes(controller, rateLimiter, strictRateLimiter) {
     router.post('/verify-token', rateLimiter, controller.verifyToken);
     router.get('/profile', rateLimiter, controller.getProfile);
     router.patch('/profile', rateLimiter, controller.updateProfile);
+    router.patch('/location', rateLimiter, controller.updateLocation);
 
     return router;
 }
